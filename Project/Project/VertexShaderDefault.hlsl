@@ -1,53 +1,51 @@
 #pragma pack_matrix(row_major)
 
-// SHADER INPUT
-struct S_VSINPUT
+
+struct InputData
 {
-	float4 pos : POSITION;
-	float3 norm : NORMAL;
-	float3 tex : TEXCOORD;
-	float4 color : COLOR;
-	uint instanceID : SV_INSTANCEID;
+	float4 Position : POSITION;
+	float3 Normal : NORMAL;
+	float3 Texel : TEXCOORD;
+	float4 Color : COLOR;
+	uint InstanceId : SV_INSTANCEID;
 };
 
-// SHADER OUTPUT
-struct S_VSOUTPUT
+struct OutputData
 {
-	float4 pos : SV_POSITION;
-	float3 norm : NORMAL;
-	float3 tex : TEXCOORD;
-	float4 color : COLOR;
-	uint instanceID : SV_INSTANCEID;
-	float4 posWrld : WORLDPOSITION;
+	float4 Position : SV_POSITION;
+	float3 Normal : NORMAL;
+	float3 Texel : TEXCOORD;
+	float4 Color : COLOR;
+	uint InstanceId : SV_INSTANCEID;
+	float4 WorldPosition : WORLDPOSITION;
 };
 
-// CONSTANT BUFFER
 cbuffer ConstantBuffer : register(b0)
 {
-	matrix wrld;
-	matrix view;
-	matrix proj;
-	matrix instanceOffsets[5];
-	float t;
-	float3 pad;
+	matrix WorldMatrix;
+	matrix ViewMatrix;
+	matrix ProjectionMatrix;
+	matrix InstanceOffsets[5];
+	float Time;
+	float3 Padding;
 }
 
-// SHADER
-S_VSOUTPUT main(S_VSINPUT _input)
+
+OutputData main(InputData input)
 {
-	S_VSOUTPUT output = (S_VSOUTPUT) 0;
-	output.pos = mul(_input.pos, instanceOffsets[_input.instanceID]);
-	output.pos = mul(output.pos, wrld);
-	output.posWrld = output.pos;
-	output.pos = mul(output.pos, view);
-	output.pos = mul(output.pos, proj);
+	OutputData output = (OutputData) 0;
+	output.Position = mul(input.Position, InstanceOffsets[input.InstanceId]);
+	output.Position = mul(output.Position, WorldMatrix);
+	output.WorldPosition = output.Position;
+	output.Position = mul(output.Position, ViewMatrix);
+	output.Position = mul(output.Position, ProjectionMatrix);
 
-	//output.norm = _input.norm;
-	output.norm = mul(float4(_input.norm, 0), wrld).xyz;
+	//output.Normal = input.Normal;
+	output.Normal = mul(float4(input.Normal, 0), WorldMatrix).xyz;
 
-	output.tex = _input.tex;
-	output.color = _input.color;
-	output.instanceID = _input.instanceID;
+	output.Texel = input.Texel;
+	output.Color = input.Color;
+	output.InstanceId = input.InstanceId;
 
 	return output;
 }

@@ -3,88 +3,89 @@
 #define MAX_POINT_LIGHTS 3
 #define MAX_SPOT_LIGHTS 3
 
-// LIGHT STRUCTS
-struct S_LIGHT_DIR
+
+struct DirectionalLight
 {
-	float4 dir;
-	float4 color;
-};
-struct S_LIGHT_PNT
-{
-	float4 pos;
-	float range;
-	float3 atten;
-	float4 color;
-};
-struct S_LIGHT_SPT
-{
-	float4 pos;
-	float4 dir;
-	float range;
-	float cone;
-	float3 atten;
-	float4 color;
+	float4 Direction;
+	float4 Color;
 };
 
-// SHADER INPUT
-struct S_PSINPUT
+struct PointLight
 {
-	float4 pos : SV_POSITION;
-	float3 norm : NORMAL;
-	float3 tex : TEXCOORD;
-	float4 color : COLOR;
-	uint instanceID : SV_INSTANCEID;
-	float4 posWrld : WORLDPOSITION;
+	float4 Position;
+	float Range;
+	float3 Attenuation;
+	float4 Color;
+};
+struct SpotLight
+{
+	float4 Position;
+	float4 Direction;
+	float Range;
+	float Cone;
+	float3 Attenuation;
+	float4 Color;
 };
 
-// SHADER VARIABLES
-Texture2D txDiffuse2D : register(t0);
-SamplerState samplerLinear : register(s0);
 
-// CONSTANT BUFFER
+struct InputData
+{
+	float4 Position : SV_POSITION;
+	float3 Normal : NORMAL;
+	float3 Texel : TEXCOORD;
+	float4 Color : COLOR;
+	uint InstanceId : SV_INSTANCEID;
+	float4 WorldPosition : WORLDPOSITION;
+};
+
+
+Texture2D DiffuxeTexture : register(t0);
+SamplerState LinearSampler : register(s0);
+
+
 cbuffer ConstantBuffer : register(b1)
 {
-	float4 ambientColor;
-	float4 instanceColors[MAX_INSTANCES];
-	S_LIGHT_DIR dLights[MAX_DIRECTIONAL_LIGHTS];
-	S_LIGHT_PNT pLights[MAX_POINT_LIGHTS];
-	//S_LIGHT_SPT sLights[MAX_SPOT_LIGHTS];
-	float t;
-	float3 pad;
+	float4 AmbientColor;
+	float4 InstanceColors[MAX_INSTANCES];
+	DirectionalLight DirectionalLights[MAX_DIRECTIONAL_LIGHTS];
+	PointLight PointLights[MAX_POINT_LIGHTS];
+	//SpotLight SpotLights[MAX_SPOT_LIGHTS];
+	float Time;
+	float3 Padding;
 }
 
-// SHADER
-float4 main(S_PSINPUT _input) : SV_TARGET
+
+float4 main(InputData input) : SV_TARGET
 {
-	// texture
-	float2 tex = _input.tex.xy;
-	tex.x *= sin(tex.y * t);
-	tex.y *= cos(tex.x * t);
-	_input.norm = normalize(_input.norm);
-	float4 diffuse = txDiffuse2D.Sample(samplerLinear, tex);
+	float2 texel = input.Texel.xy;
+	texel.x *= sin(texel.y * Time);
+	texel.y *= cos(texel.x * Time);
+	input.Normal = normalize(input.Normal);
+	float4 diffuseColor = DiffuxeTexture.Sample(LinearSampler, texel);
 	float4 finalColor = float4(0, 0, 0, 0);
-	// point lights
-	for (unsigned int j = 0; j < MAX_POINT_LIGHTS; j++)
+
+	for (unsigned int i = 0; i < MAX_POINT_LIGHTS; ++i)
 	{
-		float3 lightToPixelVector = pLights[j].pos.xyz - _input.posWrld.xyz;
-		float d = length(lightToPixelVector);
-		if (d <= pLights[j].range)
+		float3 lightToPixelVector = PointLights[i].Position.xyz - input.WorldPosition.xyz;
+		float distance = length(lightToPixelVector);
+		if (distance <= PointLights[i].Range)
 		{
-			lightToPixelVector /= d;
-			float lightIntensity = dot(lightToPixelVector, _input.norm);
+			lightToPixelVector /= distance;
+			float lightIntensity = dot(lightToPixelVector, input.Normal);
 			if (lightIntensity > 0)
 			{
-				finalColor += lightIntensity * diffuse * pLights[j].color;
-				finalColor /= pLights[j].atten[0] + (pLights[j].atten[1] * d) + (pLights[j].atten[2] * (d * d));
+				finalColor += lightIntensity * diffuseColor * PointLights[i].Color;
+				finalColor /= PointLights[i].Attenuation[0] + (PointLights[i].Attenuation[1] * distance) + (PointLights[i].Attenuation[2] * (distance * distance));
 			}
 		}
 	}
-	// directional lights
-	for (unsigned int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
+
+	for (unsigned int i = 0; i < MAX_DIRECTIONAL_LIGHTS; ++i)
 	{
-		finalColor += saturate(dot((float3) dLights[i].dir, _input.norm) * dLights[i].color);
+		finalColor += saturate(dot((float3) DirectionalLights[i].Direction, input.Normal) * DirectionalLights[i].Color);
 	}
-	finalColor = saturate(finalColor + (ambientColor * diffuse));
+
+	finalColor = saturate(finalColor + (AmbientColor * diffuseColor));
 	finalColor.a = 1;
 	return finalColor;
 }

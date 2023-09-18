@@ -40,55 +40,55 @@ using namespace DirectX;
 
 struct Vertex
 {
-	XMFLOAT4 position;
-	XMFLOAT3 normal;
-	XMFLOAT3 texel;
-	XMFLOAT4 color;
+	XMFLOAT4 Position;
+	XMFLOAT3 Normal;
+	XMFLOAT3 Texel;
+	XMFLOAT4 Color;
 };
 
 struct DirectionalLight
 {
-	XMFLOAT4 direction;
-	XMFLOAT4 color;
+	XMFLOAT4 Color;
+	XMFLOAT4 Direction;
 };
 
 struct PointLight
 {
-	XMFLOAT4 position;
-	FLOAT range;
-	XMFLOAT3 attenuation;
-	XMFLOAT4 color;
+	XMFLOAT4 Color;
+	XMFLOAT4 Position;
+	float Range;
+	XMFLOAT3 Attenuation;
 };
 
 struct SpotLight
 {
-	XMFLOAT4 position;
-	XMFLOAT4 direction;
-	FLOAT range;
-	FLOAT cone;
-	XMFLOAT3 attenuation;
-	XMFLOAT4 color;
+	XMFLOAT4 Color;
+	XMFLOAT4 Position;
+	XMFLOAT4 Direction;
+	float Range;
+	XMFLOAT3 Attenuation;
+	float Cone;
 };
 
 struct VertexShaderConstantBuffer
 {
-	XMMATRIX worldMatrix;
-	XMMATRIX viewMatrix;
-	XMMATRIX projectionMatrix;
-	XMMATRIX instanceOffsets[MAX_INSTANCES];
-	FLOAT time;
-	XMFLOAT3 padding;
+	XMMATRIX WorldMatrix;
+	XMMATRIX ViewMatrix;
+	XMMATRIX ProjectionMatrix;
+	XMMATRIX InstanceOffsets[MAX_INSTANCES];
+	float Time;
+	XMFLOAT3 Padding;
 };
 
 struct PixelShaderConstantBuffer
 {
-	XMFLOAT4 ambientColor;
-	XMFLOAT4 instanceColors[MAX_INSTANCES];
-	DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS];
-	PointLight pointLights[MAX_POINT_LIGHTS];
-	//SpotLight spotLights[MAX_SPOT_LIGHTS];
-	FLOAT time;
-	XMFLOAT3 padding;
+	XMFLOAT4 AmbientColor;
+	XMFLOAT4 InstanceColors[MAX_INSTANCES];
+	DirectionalLight DirectionalLights[MAX_DIRECTIONAL_LIGHTS];
+	PointLight PointLights[MAX_POINT_LIGHTS];
+	//SpotLight SpotLights[MAX_SPOT_LIGHTS];
+	float Time;
+	XMFLOAT3 Padding;
 };
 
 
@@ -120,35 +120,35 @@ ID3D11InputLayout* DXVertexLayout = nullptr;
 
 ID3D11Buffer* SkyboxDXVertexBuffer = nullptr;
 ID3D11Buffer* SkyboxDXIndexBuffer = nullptr;
-UINT SkyboxVertexCount = 0;
-UINT SkyboxIndexCount = 0;
+unsigned int SkyboxVertexCount = 0;
+unsigned int SkyboxIndexCount = 0;
 
 ID3D11Buffer* CubeDXVertexBuffer = nullptr;
 ID3D11Buffer* CubeDXIndexBuffer = nullptr;
-UINT CubeVertexCount = 0;
-UINT CubeIndexCount = 0;
+unsigned int CubeVertexCount = 0;
+unsigned int CubeIndexCount = 0;
 
 ID3D11Buffer* GroundPlaneDXVertexBuffer = nullptr;
 ID3D11Buffer* GroundPlaneDXIndexBuffer = nullptr;
-UINT GroundPlaneVertexCount = 0;
-UINT GroundPlaneIndexCount = 0;
-UINT GroundPlaneDivisionCount = 100;
-FLOAT GroundPlaneScale = 10.0f;
+unsigned int GroundPlaneVertexCount = 0;
+unsigned int GroundPlaneIndexCount = 0;
+unsigned int GroundPlaneDivisionCount = 100;
+float GroundPlaneScale = 10.0f;
 
 ID3D11Buffer* Brazier01DXVertexBuffer = nullptr;
 ID3D11Buffer* Brazier01DXIndexBuffer = nullptr;
-UINT Brazier01VertexCount = 0;
-UINT Brazier01IndexCount = 0;
+unsigned int Brazier01VertexCount = 0;
+unsigned int Brazier01IndexCount = 0;
 
 ID3D11Buffer* SpaceshipDXVertexBuffer = nullptr;
 ID3D11Buffer* SpaceshipDXIndexBuffer = nullptr;
-UINT SpaceshipVertexCount = 0;
-UINT SpaceshipIndexCount = 0;
+unsigned int SpaceshipVertexCount = 0;
+unsigned int SpaceshipIndexCount = 0;
 
 ID3D11Buffer* PlanetDXVertexBuffer = nullptr;
 ID3D11Buffer* PlanetDXIndexBuffer = nullptr;
-UINT PlanetVertexCount = 0;
-UINT PlanetIndexCount = 0;
+unsigned int PlanetVertexCount = 0;
+unsigned int PlanetIndexCount = 0;
 
 ID3D11Buffer* DXVertexShaderConstantBuffer = nullptr;
 ID3D11Buffer* DXPixelShaderConstantBuffer = nullptr;
@@ -193,20 +193,20 @@ XMFLOAT4X4 MoonWorldMatrix;
 XMFLOAT4X4 MarsWorldMatrix;
 XMFLOAT4X4 JupiterWorldMatrix;
 
-FLOAT CameraMoveSpeed = 4.0f; // units per second
-FLOAT CameraRotationSpeed = 40.0f; // degrees per second
-FLOAT CameraZoomSpeed = 0.01f; // zoom level per second
-FLOAT CameraZoomLevel = 1.0f;
-const FLOAT CameraMinZoom = 0.5f;
-const FLOAT CameraMaxZoom = 2.0f;
-FLOAT CameraNearPlaneMoveSpeed = 1.0f; // near plane change per second
-FLOAT CameraNearPlaneDistance = 0.01f; // current near plane
-const FLOAT CameraNearPlaneMinDistance = 0.01f;
-const FLOAT CameraNearPlaneMaxDistance = 9.0f;
-FLOAT CameraFarPlaneMoveSpeed = 10.0f; // far plane change per second
-FLOAT CameraFarPlaneDistance = 100.0f; // current far plane
-const FLOAT CameraFarPlaneMinDistance = 10.0f;
-const FLOAT CameraFarPlaneMaxDistance = 100.0f;
+float CameraMoveSpeed = 4.0f; // units per second
+float CameraRotationSpeed = 40.0f; // degrees per second
+float CameraZoomSpeed = 0.01f; // zoom level per second
+float CameraZoomLevel = 1.0f;
+const float CameraMinZoom = 0.5f;
+const float CameraMaxZoom = 2.0f;
+float CameraNearPlaneMoveSpeed = 1.0f; // near plane change per second
+float CameraNearPlaneDistance = 0.01f; // current near plane
+const float CameraNearPlaneMinDistance = 0.01f;
+const float CameraNearPlaneMaxDistance = 9.0f;
+float CameraFarPlaneMoveSpeed = 10.0f; // far plane change per second
+float CameraFarPlaneDistance = 100.0f; // current far plane
+const float CameraFarPlaneMinDistance = 10.0f;
+const float CameraFarPlaneMaxDistance = 100.0f;
 
 bool IsFreelookEnabled = true;
 bool ShouldUsedDefaultVertexShader = true;
@@ -216,14 +216,14 @@ bool ShouldUseDefaultPixelShader = true;
 // function forward definitions, aka Pain™
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
-void CreateProceduralGrid(Vertex, UINT, FLOAT, Vertex**, UINT&, UINT**, UINT&);
-void ProcessOBJMesh(const char*, Vertex**, UINT&, UINT**, UINT&);
-HRESULT InitializeDepthStencilView(UINT, UINT, ID3D11Texture2D**, ID3D11DepthStencilView**);
-HRESULT InitializeVertexBuffer(UINT, Vertex**, ID3D11Buffer**);
-HRESULT InitializeIndexBuffer(UINT, UINT**, ID3D11Buffer**);
-HRESULT InitializeConstantBuffer(UINT, ID3D11Buffer**);
+LRESULT CALLBACK WndProc(HWND, unsigned int, WPARAM, LPARAM);
+INT_PTR CALLBACK About(HWND, unsigned int, WPARAM, LPARAM);
+void CreateProceduralGrid(Vertex, unsigned int, float, Vertex**, unsigned int&, unsigned int**, unsigned int&);
+void ProcessOBJMesh(const char*, Vertex**, unsigned int&, unsigned int**, unsigned int&);
+HRESULT InitializeDepthStencilView(unsigned int, unsigned int, ID3D11Texture2D**, ID3D11DepthStencilView**);
+HRESULT InitializeVertexBuffer(unsigned int, Vertex**, ID3D11Buffer**);
+HRESULT InitializeIndexBuffer(unsigned int, unsigned int**, ID3D11Buffer**);
+HRESULT InitializeConstantBuffer(unsigned int, ID3D11Buffer**);
 HRESULT InitializeSamplerState(ID3D11SamplerState**);
 void Render();
 void Cleanup();
@@ -325,8 +325,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// get window dimensions
 	RECT windowRect;
 	GetClientRect(HWindow, &windowRect);
-	UINT windowWidth = windowRect.right - windowRect.left;
-	UINT windowHeight = windowRect.bottom - windowRect.top;
+	unsigned int windowWidth = windowRect.right - windowRect.left;
+	unsigned int windowHeight = windowRect.bottom - windowRect.top;
 
 	// --------------------------------------------------
 	// ATTACH D3D TO WINDOW
@@ -343,7 +343,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	swapChainDescriptor.BufferDesc.Height = windowHeight;
 	swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // buffer usage flag; specifies what swap chain's buffer will be used for
 	swapChainDescriptor.SampleDesc.Count = 1; // samples per pixel while drawing
-	UINT createDeviceFlags = 0;
+	unsigned int createDeviceFlags = 0;
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -421,16 +421,16 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	// ---------- VIEWPORTS ----------
 	// setup main viewport
-	MainDXViewport.Width = (FLOAT)windowWidth;
-	MainDXViewport.Height = (FLOAT)windowHeight;
+	MainDXViewport.Width = (float)windowWidth;
+	MainDXViewport.Height = (float)windowHeight;
 	MainDXViewport.TopLeftX = 0;
 	MainDXViewport.TopLeftX = 0;
 	MainDXViewport.MinDepth = 0.0f; // exponential depth; near/far planes are handled in projection matrix
 	MainDXViewport.MaxDepth = 1.0f;
 
 	// setup minimap viewport
-	AlternateDXViewport.Width = (FLOAT)windowWidth / 4.0f;
-	AlternateDXViewport.Height = (FLOAT)windowHeight / 4.0f;
+	AlternateDXViewport.Width = (float)windowWidth / 4.0f;
+	AlternateDXViewport.Height = (float)windowHeight / 4.0f;
 	AlternateDXViewport.TopLeftX = 0;
 	AlternateDXViewport.TopLeftX = 0;
 	AlternateDXViewport.MinDepth = 0.0f; // exponential depth; near/far planes are handled in projection matrix
@@ -462,7 +462,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	UINT numInputElements = ARRAYSIZE(inputElementDesc);
+	unsigned int numInputElements = ARRAYSIZE(inputElementDesc);
 	// create input layout
 	hresult = DXDevice->CreateInputLayout(inputElementDesc, numInputElements, VertexShaderDefault, sizeof(VertexShaderDefault), &DXVertexLayout);
 	// set input layout
@@ -473,7 +473,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// ----- SKYBOX -----
 	// load vertex / index data
 	Vertex* p_verts_Skybox = nullptr;
-	UINT* p_inds_Skybox = nullptr;
+	unsigned int* p_inds_Skybox = nullptr;
 	ProcessOBJMesh("Assets/skybox.obj", &p_verts_Skybox, SkyboxVertexCount, &p_inds_Skybox, SkyboxIndexCount);
 	// create vertex / index buffers
 	hresult = InitializeVertexBuffer(SkyboxVertexCount, &p_verts_Skybox, &SkyboxDXVertexBuffer);
@@ -488,11 +488,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// ----- CUBE -----
 	// load vertex / index data
 	Vertex* p_verts_Cube = nullptr;
-	UINT* p_inds_Cube = nullptr;
+	unsigned int* p_inds_Cube = nullptr;
 	ProcessOBJMesh("Assets/cube.obj", &p_verts_Cube, CubeVertexCount, &p_inds_Cube, CubeIndexCount);
 	// create vertex / index buffers
 	hresult = InitializeVertexBuffer(CubeVertexCount, (Vertex**)&p_verts_Cube, &CubeDXVertexBuffer);
-	hresult = InitializeIndexBuffer(CubeIndexCount, (UINT**)&p_inds_Cube, &CubeDXIndexBuffer);
+	hresult = InitializeIndexBuffer(CubeIndexCount, (unsigned int**)&p_inds_Cube, &CubeDXIndexBuffer);
 	// set initial world matrix
 	XMStoreFloat4x4(&CubeWorldMatrix, XMMatrixIdentity());
 	// ----- CUBE -----
@@ -501,7 +501,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// generate vertex / index data
 	Vertex gridOrigin = { { 0, 0, 0, 1 }, { 0, 1, 0 }, { 0, 0, 0 }, {} };
 	Vertex* p_verts_GroundPlane = nullptr;
-	UINT* p_inds_GroundPlane = nullptr;
+	unsigned int* p_inds_GroundPlane = nullptr;
 	CreateProceduralGrid(gridOrigin, GroundPlaneDivisionCount, GroundPlaneScale,
 		&p_verts_GroundPlane, GroundPlaneVertexCount, &p_inds_GroundPlane, GroundPlaneIndexCount);
 	// create vertex / index buffers
@@ -517,7 +517,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// ----- BRAZIER01 -----
 	// load vertex / index data
 	Vertex* p_verts_Brazier01 = nullptr;
-	UINT* p_inds_Brazier01 = nullptr;
+	unsigned int* p_inds_Brazier01 = nullptr;
 	ProcessOBJMesh("Assets/Brazier01.obj", &p_verts_Brazier01, Brazier01VertexCount,
 		&p_inds_Brazier01, Brazier01IndexCount);
 	// create vertex / index buffers
@@ -533,7 +533,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// ----- SPACESHIP -----
 	// load vertex / index data
 	Vertex* p_verts_Spaceship = nullptr;
-	UINT* p_inds_Spaceship = nullptr;
+	unsigned int* p_inds_Spaceship = nullptr;
 	ProcessOBJMesh("Assets/spaceship.obj", &p_verts_Spaceship, SpaceshipVertexCount,
 		&p_inds_Spaceship, SpaceshipIndexCount);
 	// create vertex / index buffers
@@ -549,7 +549,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// ----- PLANET -----
 	// load vertex / index data
 	Vertex* p_verts_Planet = nullptr;
-	UINT* p_inds_Planet = nullptr;
+	unsigned int* p_inds_Planet = nullptr;
 	ProcessOBJMesh("Assets/planet.obj", &p_verts_Planet, PlanetVertexCount,
 		&p_inds_Planet, PlanetIndexCount);
 	// create vertex / index buffers
@@ -589,9 +589,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	// projection
 	// main
-	XMStoreFloat4x4(&ProjectionMatrix, XMMatrixPerspectiveFovLH(XM_PIDIV4, windowWidth / (FLOAT)windowHeight, 0.01f, 100.0f));
+	XMStoreFloat4x4(&ProjectionMatrix, XMMatrixPerspectiveFovLH(XM_PIDIV4, windowWidth / (float)windowHeight, 0.01f, 100.0f));
 	// RTT
-	XMStoreFloat4x4(&RenderToTextureProjectionMatrix, XMMatrixPerspectiveFovLH(XM_PIDIV4, windowWidth / (FLOAT)windowHeight, 0.01f, 100.0f));
+	XMStoreFloat4x4(&RenderToTextureProjectionMatrix, XMMatrixPerspectiveFovLH(XM_PIDIV4, windowWidth / (float)windowHeight, 0.01f, 100.0f));
 	// ---------- MATRICES ----------
 
 	// ATTACH D3D TO WINDOW
@@ -601,7 +601,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
+//  FUNCTION: WndProc(HWND, unsigned int, WPARAM, LPARAM)
 //
 //  PURPOSE: Processes messages for the main window.
 //
@@ -610,7 +610,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - post a quit message and return
 //
 //
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
@@ -649,7 +649,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 // Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK About(HWND hDlg, unsigned int message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
 	switch (message)
@@ -668,48 +668,48 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	return (INT_PTR)FALSE;
 }
 
-void CreateProceduralGrid(Vertex _origin, UINT _numDivisions, FLOAT _scale,
-	Vertex** _pp_verts, UINT& _numVerts, UINT** _pp_inds, UINT& _numInds)
+void CreateProceduralGrid(Vertex _origin, unsigned int _numDivisions, float _scale,
+	Vertex** _pp_verts, unsigned int& _numVerts, unsigned int** _pp_inds, unsigned int& _numInds)
 {
 	// calculate number of vertices / indices
 	_numVerts = _numDivisions * _numDivisions;
 	_numInds = 6 * (_numDivisions - 1) * (_numDivisions - 1);
 	// set vertex data
 	Vertex* p_verts = new Vertex[_numVerts];
-	for (UINT z = 0; z < _numDivisions; z++)
-		for (UINT x = 0; x < _numDivisions; x++)
+	for (unsigned int z = 0; z < _numDivisions; z++)
+		for (unsigned int x = 0; x < _numDivisions; x++)
 		{
-			UINT index = x + (z * _numDivisions);
+			unsigned int index = x + (z * _numDivisions);
 			assert(index < _numVerts);
 			// calculate offset amount
-			FLOAT offsetX = (_scale * -0.5f) + (_scale / (_numDivisions - 1)) * x;
-			FLOAT offsetZ = (_scale * -0.5f) + (_scale / (_numDivisions - 1)) * z;
+			float offsetX = (_scale * -0.5f) + (_scale / (_numDivisions - 1)) * x;
+			float offsetZ = (_scale * -0.5f) + (_scale / (_numDivisions - 1)) * z;
 			// offset position
-			p_verts[index].position = _origin.position;
-			p_verts[index].position.x += offsetX;
-			p_verts[index].position.z += offsetZ;
+			p_verts[index].Position = _origin.Position;
+			p_verts[index].Position.x += offsetX;
+			p_verts[index].Position.z += offsetZ;
 			// copy normal
-			p_verts[index].normal = { 0, 1, 0 };
-			// offset tex coord
-			p_verts[index].texel = _origin.texel;
-			p_verts[index].texel.x += offsetX;
-			p_verts[index].texel.y += offsetZ;
-			// randomize color
-			p_verts[index].color = {};
-			p_verts[index].color.x = (rand() % 1000) / 1000.0f;
-			p_verts[index].color.y = (rand() % 1000) / 1000.0f;
-			p_verts[index].color.z = (rand() % 1000) / 1000.0f;
-			p_verts[index].color.w = 1;
+			p_verts[index].Normal = { 0, 1, 0 };
+			// offset Texel coord
+			p_verts[index].Texel = _origin.Texel;
+			p_verts[index].Texel.x += offsetX;
+			p_verts[index].Texel.y += offsetZ;
+			// randomize Color
+			p_verts[index].Color = {};
+			p_verts[index].Color.x = (rand() % 1000) / 1000.0f;
+			p_verts[index].Color.y = (rand() % 1000) / 1000.0f;
+			p_verts[index].Color.z = (rand() % 1000) / 1000.0f;
+			p_verts[index].Color.w = 1;
 		}
 	*_pp_verts = p_verts;
 	// set indices
-	UINT* p_inds = new UINT[_numInds];
-	for (UINT z = 0; z < _numDivisions - 1; z++)
-		for (UINT x = 0; x < _numDivisions - 1; x++)
+	unsigned int* p_inds = new unsigned int[_numInds];
+	for (unsigned int z = 0; z < _numDivisions - 1; z++)
+		for (unsigned int x = 0; x < _numDivisions - 1; x++)
 		{
-			UINT vertIndex = x + (z * _numDivisions);
+			unsigned int vertIndex = x + (z * _numDivisions);
 			assert(vertIndex < _numVerts);
-			UINT index = 6 * (x + (z * (_numDivisions - 1)));
+			unsigned int index = 6 * (x + (z * (_numDivisions - 1)));
 			assert(index < _numInds);
 			p_inds[index + 0] = vertIndex;
 			p_inds[index + 1] = vertIndex + _numDivisions + 1;
@@ -718,47 +718,47 @@ void CreateProceduralGrid(Vertex _origin, UINT _numDivisions, FLOAT _scale,
 			p_inds[index + 4] = vertIndex + _numDivisions;
 			p_inds[index + 5] = vertIndex + _numDivisions + 1;
 
-			//_RPTN(0, "%d, %d, %d,\n%d, %d, %d\n\n", p_inds[index + 0], p_inds[index + 1], p_inds[index + 2], p_inds[index + 3], p_inds[index + 4], p_inds[index + 5]);
+			//_RPTN(0, "%distance, %distance, %distance,\n%distance, %distance, %distance\n\n", p_inds[index + 0], p_inds[index + 1], p_inds[index + 2], p_inds[index + 3], p_inds[index + 4], p_inds[index + 5]);
 		}
 	*_pp_inds = p_inds;
 }
 
-void ProcessOBJMesh(const char* _filepath, Vertex** _pp_verts, UINT& vertexCount, UINT** _pp_inds, UINT& indexCount)
+void ProcessOBJMesh(const char* _filepath, Vertex** _pp_verts, unsigned int& vertexCount, unsigned int** _pp_inds, unsigned int& indexCount)
 {
 	OBJMesh RawMeshData = LoadOBJMesh(_filepath);
 	vertexCount = RawMeshData.VertexCount;
 	indexCount = RawMeshData.IndexCount;
 	// copy vertex data
 	Vertex* vertices = new Vertex[vertexCount];
-	for (UINT i = 0; i < vertexCount; i++)
+	for (unsigned int i = 0; i < vertexCount; ++i)
 	{
 		// copy position
-		vertices[i].position.x = RawMeshData.Vertices[i].Position[0];
-		vertices[i].position.y = RawMeshData.Vertices[i].Position[1];
-		vertices[i].position.z = RawMeshData.Vertices[i].Position[2];
-		vertices[i].position.w = 1;
+		vertices[i].Position.x = RawMeshData.Vertices[i].Position[0];
+		vertices[i].Position.y = RawMeshData.Vertices[i].Position[1];
+		vertices[i].Position.z = RawMeshData.Vertices[i].Position[2];
+		vertices[i].Position.w = 1;
 		// copy normal
-		vertices[i].normal.x = RawMeshData.Vertices[i].Normal[0];
-		vertices[i].normal.y = RawMeshData.Vertices[i].Normal[1];
-		vertices[i].normal.z = RawMeshData.Vertices[i].Normal[2];
+		vertices[i].Normal.x = RawMeshData.Vertices[i].Normal[0];
+		vertices[i].Normal.y = RawMeshData.Vertices[i].Normal[1];
+		vertices[i].Normal.z = RawMeshData.Vertices[i].Normal[2];
 		// copy texcoord
-		vertices[i].texel.x = RawMeshData.Vertices[i].Texel[0];
-		vertices[i].texel.y = RawMeshData.Vertices[i].Texel[1];
-		vertices[i].texel.z = RawMeshData.Vertices[i].Texel[2];
-		// set color
-		vertices[i].color = { 1, 1, 1, 1 };
+		vertices[i].Texel.x = RawMeshData.Vertices[i].Texel[0];
+		vertices[i].Texel.y = RawMeshData.Vertices[i].Texel[1];
+		vertices[i].Texel.z = RawMeshData.Vertices[i].Texel[2];
+		// set Color
+		vertices[i].Color = { 1, 1, 1, 1 };
 	}
 	*_pp_verts = vertices;
 	// copy index data
-	UINT* indices = new UINT[indexCount];
-	for (UINT i = 0; i < indexCount; i++)
+	unsigned int* indices = new unsigned int[indexCount];
+	for (unsigned int i = 0; i < indexCount; ++i)
 	{
 		indices[i] = RawMeshData.Indices[i];
 	}
 	*_pp_inds = indices;
 }
 
-HRESULT InitializeDepthStencilView(UINT _width, UINT _height, ID3D11Texture2D** _pp_depthStencil,
+HRESULT InitializeDepthStencilView(unsigned int _width, unsigned int _height, ID3D11Texture2D** _pp_depthStencil,
 	ID3D11DepthStencilView** _pp_depthStencilView)
 {
 	HRESULT hr;
@@ -787,7 +787,7 @@ HRESULT InitializeDepthStencilView(UINT _width, UINT _height, ID3D11Texture2D** 
 	return DXDevice->CreateDepthStencilView(*_pp_depthStencil, &depthStencilViewDesc, _pp_depthStencilView);
 }
 
-HRESULT InitializeVertexBuffer(UINT _numVerts, Vertex** _pp_verts, ID3D11Buffer** _pp_vBuffer)
+HRESULT InitializeVertexBuffer(unsigned int _numVerts, Vertex** _pp_verts, ID3D11Buffer** _pp_vBuffer)
 {
 	D3D11_BUFFER_DESC bufferDesc = {};
 	bufferDesc.ByteWidth = sizeof(Vertex) * _numVerts;
@@ -799,10 +799,10 @@ HRESULT InitializeVertexBuffer(UINT _numVerts, Vertex** _pp_verts, ID3D11Buffer*
 	return DXDevice->CreateBuffer(&bufferDesc, &subData, _pp_vBuffer);
 }
 
-HRESULT InitializeIndexBuffer(UINT _numInds, UINT** _pp_inds, ID3D11Buffer** _pp_iBuffer)
+HRESULT InitializeIndexBuffer(unsigned int _numInds, unsigned int** _pp_inds, ID3D11Buffer** _pp_iBuffer)
 {
 	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.ByteWidth = sizeof(UINT) * _numInds;
+	bufferDesc.ByteWidth = sizeof(unsigned int) * _numInds;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
@@ -811,7 +811,7 @@ HRESULT InitializeIndexBuffer(UINT _numInds, UINT** _pp_inds, ID3D11Buffer** _pp
 	return DXDevice->CreateBuffer(&bufferDesc, &subData, _pp_iBuffer);
 }
 
-HRESULT InitializeConstantBuffer(UINT _bufferSize, ID3D11Buffer** _pp_cBuffer)
+HRESULT InitializeConstantBuffer(unsigned int _bufferSize, ID3D11Buffer** _pp_cBuffer)
 {
 	D3D11_BUFFER_DESC bufferDesc = {};
 	bufferDesc.ByteWidth = _bufferSize;
@@ -845,7 +845,7 @@ void Render()
 	ULONGLONG timeCur = GetTickCount64();
 	if (timeStart == 0)
 		timeStart = timeCur;
-	float t = (timeCur - timeStart) / 1000.0f;
+	float Time = (timeCur - timeStart) / 1000.0f;
 	float dt = (timeCur - timePrev) / 1000.0f;
 	timePrev = timeCur;
 	// ----- UPDATE TIME -----
@@ -853,13 +853,13 @@ void Render()
 	// ----- GET WINDOW DIMENSIONS -----
 	RECT windowRect;
 	GetClientRect(HWindow, &windowRect);
-	UINT windowWidth = windowRect.right - windowRect.left;
-	UINT windowHeight = windowRect.bottom - windowRect.top;
+	unsigned int windowWidth = windowRect.right - windowRect.left;
+	unsigned int windowHeight = windowRect.bottom - windowRect.top;
 	// ----- GET WINDOW DIMENSIONS -----
 
 	// ----- SET BYTE STRIDES / OFFSETS -----
-	UINT strides[] = { sizeof(Vertex) };
-	UINT offsets[] = { 0 };
+	unsigned int strides[] = { sizeof(Vertex) };
+	unsigned int offsets[] = { 0 };
 	// ----- SET BYTE STRIDES / OFFSETS -----
 
 	// ----- CREATE CONSTANT BUFFER STRUCT INSTANCES -----
@@ -868,8 +868,8 @@ void Render()
 	// ----- CREATE CONSTANT BUFFER STRUCT INSTANCES -----
 
 	// ----- GENERAL PURPOSE VARS -----
-	// color to clear render targets to
-	FLOAT clearColor[4] = { 0, 0, 0.25f, 1 };
+	// Color to clear render targets to
+	float clearColor[4] = { 0, 0, 0.25f, 1 };
 	// matrices
 	XMMATRIX translate = XMMatrixIdentity();
 	XMMATRIX rotate = XMMatrixIdentity();
@@ -896,30 +896,30 @@ void Render()
 	// ----- LIGHTS -----
 	// directional
 #define LIGHTS_DIR 1
-	DirectionalLight dLights[MAX_DIRECTIONAL_LIGHTS] =
+	DirectionalLight DirectionalLights[MAX_DIRECTIONAL_LIGHTS] =
 	{
-		// dir, color
+		// Direction, Color
 		{ { 0, 1, 0, 0 }, { 0, 0, 1, 1 } },
 		{},
 		{}
 	};
 	// point
 #define LIGHTS_PNT 1
-	PointLight pLights[MAX_POINT_LIGHTS] =
+	PointLight PointLights[MAX_POINT_LIGHTS] =
 	{
-		// pos, range, atten, color
+		// Position, Range, Attenuation, Color
 		{ { 1.5f, 0.5, 0, 1 }, 10, { 0, 0, 0.5f}, { 0, 1, 0, 1 } },
 		{},
 		{}
 	};
 	// spot
-	SpotLight sLights[MAX_SPOT_LIGHTS] = {};
+	SpotLight SpotLights[MAX_SPOT_LIGHTS] = {};
 	// ----- LIGHTS -----
 
 	// ----- UPDATE WORLD POSITIONS -----
 	// --- CUBE ---
 	// orbit about origin
-	rotate = XMMatrixRotationY(0.5f * t);
+	rotate = XMMatrixRotationY(0.5f * Time);
 	wrld_Cube = XMMatrixTranslation(2.5f, 6, 0) * rotate;
 	// --- CUBE ---
 	// --- GROUND PLANE ---
@@ -927,57 +927,57 @@ void Render()
 	// --- GROUND PLANE ---
 	// --- SPACESHIP ---
 	// orbit about origin
-	rotate = XMMatrixRotationY(-1.3f * t);
+	rotate = XMMatrixRotationY(-1.3f * Time);
 	wrld_Spaceship = XMMatrixTranslation(5, 2, 0) * rotate;
 	// --- SPACESHIP ---
 	// --- SUN ---
 	// spin
 	scale = XMMatrixScaling(1.2f, 1.2f, 1.2f);
-	rotate = XMMatrixRotationY(0.1f * t);
+	rotate = XMMatrixRotationY(0.1f * Time);
 	wrld_Sun = scale * rotate * XMMatrixTranslation(0, 3, 0);
 	// --- SUN ---
 	// --- EARTH ---
 	// orbit about origin
 	scale = XMMatrixScaling(0.4f, 0.4f, 0.4f);
-	rotate = XMMatrixRotationY(0.74f * t);
+	rotate = XMMatrixRotationY(0.74f * Time);
 	wrld_Earth = scale * XMMatrixTranslation(3, 3, -2) * rotate;
 	// spin
-	rotate = XMMatrixRotationY(2.1f * t);
+	rotate = XMMatrixRotationY(2.1f * Time);
 	wrld_Earth = rotate * wrld_Earth;
 	// --- EARTH ---
 	// --- MOON ---
 	// orbit about earth
 	scale = XMMatrixScaling(0.2f, 0.2f, 0.2f);
-	rotate = XMMatrixRotationY(0.4f * t);
+	rotate = XMMatrixRotationY(0.4f * Time);
 	wrld_Moon = scale * XMMatrixTranslation(2, 0, 0) * rotate * wrld_Earth;
 	// --- MOON ---
 	// --- MARS ---
 	// orbit about origin
 	scale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
-	rotate = XMMatrixRotationY(0.53f * t);
+	rotate = XMMatrixRotationY(0.53f * Time);
 	wrld_Mars = scale * XMMatrixTranslation(4, 3, 3) * rotate;
 	// spin
-	rotate = XMMatrixRotationY(1.6f * t);
+	rotate = XMMatrixRotationY(1.6f * Time);
 	wrld_Mars = rotate * wrld_Mars;
 	// --- MARS ---
 	// --- JUPITER ---
 	// orbit about origin
 	scale = XMMatrixScaling(0.7f, 0.7f, 0.7f);
-	rotate = XMMatrixRotationY(0.31f * t);
+	rotate = XMMatrixRotationY(0.31f * Time);
 	wrld_Jupiter = scale * XMMatrixTranslation(6, 3, -3) * rotate;
 	// spin
-	rotate = XMMatrixRotationY(1.2f * t);
+	rotate = XMMatrixRotationY(1.2f * Time);
 	wrld_Jupiter = rotate * wrld_Jupiter;
 	// --- JUPITER ---
 	// --- LIGHTS ---
 	// DLIGHT 0
-	XMMATRIX lightMatrix = XMMatrixTranslation(dLights[0].direction.x, dLights[0].direction.y, dLights[0].direction.z);
-	rotate = XMMatrixRotationZ(0.4f * t);
-	XMStoreFloat4(&dLights[0].direction, (lightMatrix * rotate).r[3]);
+	XMMATRIX lightMatrix = XMMatrixTranslation(DirectionalLights[0].Direction.x, DirectionalLights[0].Direction.y, DirectionalLights[0].Direction.z);
+	rotate = XMMatrixRotationZ(0.4f * Time);
+	XMStoreFloat4(&DirectionalLights[0].Direction, (lightMatrix * rotate).r[3]);
 	// PLIGHT 0
-	lightMatrix = XMMatrixTranslation(pLights[0].position.x, pLights[0].position.y, pLights[0].position.z);
-	rotate = XMMatrixRotationY(0.7f * t);
-	XMStoreFloat4(&pLights[0].position, (lightMatrix * rotate).r[3]);
+	lightMatrix = XMMatrixTranslation(PointLights[0].Position.x, PointLights[0].Position.y, PointLights[0].Position.z);
+	rotate = XMMatrixRotationY(0.7f * Time);
+	XMStoreFloat4(&PointLights[0].Position, (lightMatrix * rotate).r[3]);
 	// --- LIGHTS ---
 	// ----- UPDATE WORLD POSITIONS -----
 
@@ -1034,7 +1034,7 @@ void Render()
 
 	// ----- UPDATE CAMERA -----
 	// -- POSITION --
-	FLOAT x, y, z;
+	float x, y, z;
 	x = y = z = 0.0f;
 	if (GetAsyncKeyState('A'))			x -= CameraMoveSpeed * dt; // move left
 	if (GetAsyncKeyState('D'))			x += CameraMoveSpeed * dt; // move right
@@ -1047,7 +1047,7 @@ void Render()
 	view = XMMatrixTranslation(x, y, z) * view;
 	// -- POSITION --
 	// -- ROTATION --
-	FLOAT xr, yr;
+	float xr, yr;
 	xr = yr = 0.0f;
 	if (GetAsyncKeyState(VK_UP))	xr -= DEGREES_TO_RADIANS(CameraRotationSpeed) * dt; // rotate upward
 	if (GetAsyncKeyState(VK_DOWN))	xr += DEGREES_TO_RADIANS(CameraRotationSpeed) * dt; // rotate downward
@@ -1107,12 +1107,12 @@ void Render()
 		CameraFarPlaneDistance = 100.0f;
 	}
 	// update projection matrix with current zoom level and near/far planes
-	proj = XMMatrixPerspectiveFovLH(XM_PIDIV4 / CameraZoomLevel, windowWidth / (FLOAT)windowHeight, CameraNearPlaneDistance, CameraFarPlaneDistance);
+	proj = XMMatrixPerspectiveFovLH(XM_PIDIV4 / CameraZoomLevel, windowWidth / (float)windowHeight, CameraNearPlaneDistance, CameraFarPlaneDistance);
 	// ----- UPDATE CAMERA -----
 
 	// ----- PER-INSTANCE DATA -----
 	XMMATRIX instanceOffsets[MAX_INSTANCES] = {};
-	XMFLOAT4 instanceColors[MAX_INSTANCES] = {};
+	XMFLOAT4 InstanceColors[MAX_INSTANCES] = {};
 	// ----- PER-INSTANCE DATA -----
 
 	// UPDATES / DRAW SETUP
@@ -1123,16 +1123,16 @@ void Render()
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
 	// vertex
 	XMVECTOR determinant = XMMatrixDeterminant(view);
-	cBufferVS.viewMatrix = XMMatrixInverse(&determinant, view);
-	cBufferVS.projectionMatrix = proj_RTT;
-	cBufferVS.time = t;
+	cBufferVS.ViewMatrix = XMMatrixInverse(&determinant, view);
+	cBufferVS.ProjectionMatrix = proj_RTT;
+	cBufferVS.Time = Time;
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 
 	// pixel
-	cBufferPS.ambientColor = { 1, 1, 1, 1 };
-	cBufferPS.directionalLights[0] = dLights[0];
-	cBufferPS.pointLights[0] = pLights[0];
-	cBufferPS.time = t;
+	cBufferPS.AmbientColor = { 1, 1, 1, 1 };
+	cBufferPS.DirectionalLights[0] = DirectionalLights[0];
+	cBufferPS.PointLights[0] = PointLights[0];
+	cBufferPS.Time = Time;
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
 
@@ -1152,8 +1152,8 @@ void Render()
 	// --- DRAW SKYBOX ---
 	DXDeviceContext->IASetVertexBuffers(0, 1, &SkyboxDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(SkyboxDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = XMMatrixTranslationFromVector(view.r[3]);
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = XMMatrixTranslationFromVector(view.r[3]);
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
@@ -1170,8 +1170,8 @@ void Render()
 	// ----- CUBE -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &CubeDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(CubeDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Cube;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Cube;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
@@ -1182,12 +1182,12 @@ void Render()
 	// ----- GROUND PLANE -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &GroundPlaneDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(GroundPlaneDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_GroundPlane;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_GroundPlane;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderInputColorLights, 0, 0);
 	DXDeviceContext->DrawIndexed(GroundPlaneIndexCount, 0, 0);
@@ -1196,12 +1196,12 @@ void Render()
 	// ----- BRAZIER01 -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &Brazier01DXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(Brazier01DXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &Brazier01DXShaderResourceView);
@@ -1211,12 +1211,12 @@ void Render()
 	// ----- SPACESHIP -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &SpaceshipDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(SpaceshipDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Spaceship;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Spaceship;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &SpaceshipDXShaderResourceView);
@@ -1226,12 +1226,12 @@ void Render()
 	// ----- SUN -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Sun;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Sun;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &SunDXShaderResourceView);
@@ -1241,12 +1241,12 @@ void Render()
 	// ----- EARTH -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Earth;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Earth;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &EarthDXShaderResourceView);
@@ -1256,12 +1256,12 @@ void Render()
 	// ----- MOON -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Moon;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Moon;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &MoonDXShaderResourceView);
@@ -1271,12 +1271,12 @@ void Render()
 	// ----- MARS -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Mars;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Mars;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &MarsDXShaderResourceView);
@@ -1286,12 +1286,12 @@ void Render()
 	// ----- JUPITER -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Jupiter;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Jupiter;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &JupiterDXShaderResourceView);
@@ -1301,26 +1301,26 @@ void Render()
 	// ----- VISUAL LIGHTS -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &CubeDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(CubeDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[1] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[2] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[3] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[4] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[1] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[2] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[3] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[4] = XMMatrixIdentity();
 	// size scaling
-	FLOAT sizeScale = 1.5f;
+	float sizeScale = 1.5f;
 	// distance scaling
-	FLOAT distScale = 1.0f;
+	float distScale = 1.0f;
 	// --- DIRECTIONAL ---
 	sizeScale = 2.0f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	distScale = 10.0f;
-	for (UINT i = 0; i < LIGHTS_DIR; i++)
+	for (unsigned int i = 0; i < LIGHTS_DIR; ++i)
 	{
-		cBufferVS.worldMatrix = scale * XMMatrixTranslation(distScale * dLights[i].direction.x,
-			distScale * dLights[i].direction.y, distScale * dLights[i].direction.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
+			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.instanceColors[0] = dLights[i].color;
+		cBufferPS.InstanceColors[0] = DirectionalLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1329,12 +1329,12 @@ void Render()
 	// --- POINT ---
 	sizeScale = 0.25f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
-	for (UINT i = 0; i < LIGHTS_PNT; i++)
+	for (unsigned int i = 0; i < LIGHTS_PNT; ++i)
 	{
-		cBufferVS.worldMatrix = scale * XMMatrixTranslation(pLights[i].position.x, pLights[i].position.y, pLights[i].position.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.instanceColors[0] = pLights[i].color;
+		cBufferPS.InstanceColors[0] = PointLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1349,24 +1349,24 @@ void Render()
 	if (IsFreelookEnabled)
 	{
 		XMVECTOR determinant = XMMatrixDeterminant(view);
-		cBufferVS.viewMatrix = XMMatrixInverse(&determinant, view);
+		cBufferVS.ViewMatrix = XMMatrixInverse(&determinant, view);
 	}
 	else
 	{
 		XMVECTOR eye = XMVectorSet(0, 10, -10, 1);
 		XMVECTOR at = wrld_Cube.r[3];
 		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
-		cBufferVS.viewMatrix = XMMatrixLookAtLH(eye, at, up);
+		cBufferVS.ViewMatrix = XMMatrixLookAtLH(eye, at, up);
 	}
-	cBufferVS.projectionMatrix = proj;
-	cBufferVS.time = t;
+	cBufferVS.ProjectionMatrix = proj;
+	cBufferVS.Time = Time;
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 
 	// pixel
-	cBufferPS.ambientColor = { 0.5f, 0.5f, 0.5f, 1 };
-	cBufferPS.directionalLights[0] = dLights[0];
-	cBufferPS.pointLights[0] = pLights[0];
-	cBufferPS.time = t;
+	cBufferPS.AmbientColor = { 0.5f, 0.5f, 0.5f, 1 };
+	cBufferPS.DirectionalLights[0] = DirectionalLights[0];
+	cBufferPS.PointLights[0] = PointLights[0];
+	cBufferPS.Time = Time;
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
 
@@ -1386,8 +1386,8 @@ void Render()
 	// --- DRAW SKYBOX ---
 	DXDeviceContext->IASetVertexBuffers(0, 1, &SkyboxDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(SkyboxDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = XMMatrixTranslationFromVector(view.r[3]);
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = XMMatrixTranslationFromVector(view.r[3]);
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
@@ -1404,8 +1404,8 @@ void Render()
 	// ----- CUBE -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &CubeDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(CubeDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Cube;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Cube;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
@@ -1417,12 +1417,12 @@ void Render()
 	// ----- GROUND PLANE -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &GroundPlaneDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(GroundPlaneDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_GroundPlane;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_GroundPlane;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderInputColorLights, 0, 0);
 	DXDeviceContext->DrawIndexed(GroundPlaneIndexCount, 0, 0);
@@ -1431,14 +1431,14 @@ void Render()
 	// ----- BRAZIER01 -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &Brazier01DXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(Brazier01DXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	if (ShouldUsedDefaultVertexShader) DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);	// default shader
 	else DXDeviceContext->VSSetShader(DXVertexShaderDistort, 0, 0);		// fancy shader
 	if (ShouldUseDefaultGeometryShader) DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);	// default shader
 	else DXDeviceContext->GSSetShader(DXGeometryShaderDistort, 0, 0);		// fancy shader
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	if (ShouldUseDefaultPixelShader) DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);	// default shader
 	else DXDeviceContext->PSSetShader(DXPixelShaderDistort, 0, 0);		// fancy shader
@@ -1449,12 +1449,12 @@ void Render()
 	// ----- SPACESHIP -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &SpaceshipDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(SpaceshipDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Spaceship;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Spaceship;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &SpaceshipDXShaderResourceView);
@@ -1464,12 +1464,12 @@ void Render()
 	// ----- SUN -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Sun;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Sun;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &SunDXShaderResourceView);
@@ -1479,12 +1479,12 @@ void Render()
 	// ----- EARTH -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Earth;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Earth;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &EarthDXShaderResourceView);
@@ -1494,12 +1494,12 @@ void Render()
 	// ----- MOON -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Moon;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Moon;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &MoonDXShaderResourceView);
@@ -1509,12 +1509,12 @@ void Render()
 	// ----- MARS -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Mars;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Mars;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &MarsDXShaderResourceView);
@@ -1524,12 +1524,12 @@ void Render()
 	// ----- JUPITER -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Jupiter;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Jupiter;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &JupiterDXShaderResourceView);
@@ -1539,11 +1539,11 @@ void Render()
 	// ----- VISUAL LIGHTS -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &CubeDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(CubeDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[1] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[2] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[3] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[4] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[1] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[2] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[3] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[4] = XMMatrixIdentity();
 	// size scaling
 	sizeScale = 1.5f;
 	// distance scaling
@@ -1552,13 +1552,13 @@ void Render()
 	sizeScale = 2.0f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	distScale = 10.0f;
-	for (UINT i = 0; i < LIGHTS_DIR; i++)
+	for (unsigned int i = 0; i < LIGHTS_DIR; ++i)
 	{
-		cBufferVS.worldMatrix = scale * XMMatrixTranslation(distScale * dLights[i].direction.x,
-			distScale * dLights[i].direction.y, distScale * dLights[i].direction.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
+			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.instanceColors[0] = dLights[i].color;
+		cBufferPS.InstanceColors[0] = DirectionalLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1567,12 +1567,12 @@ void Render()
 	// --- POINT ---
 	sizeScale = 0.25f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
-	for (UINT i = 0; i < LIGHTS_PNT; i++)
+	for (unsigned int i = 0; i < LIGHTS_PNT; ++i)
 	{
-		cBufferVS.worldMatrix = scale * XMMatrixTranslation(pLights[i].position.x, pLights[i].position.y, pLights[i].position.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.instanceColors[0] = pLights[i].color;
+		cBufferPS.InstanceColors[0] = PointLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1591,16 +1591,16 @@ void Render()
 	determinant = XMMatrixDeterminant(view1);
 	view1 = XMMatrixInverse(&determinant, view1);
 	determinant = XMMatrixDeterminant(view1);
-	cBufferVS.viewMatrix = XMMatrixInverse(&determinant, view1);
-	cBufferVS.projectionMatrix = proj;
-	cBufferVS.time = t;
+	cBufferVS.ViewMatrix = XMMatrixInverse(&determinant, view1);
+	cBufferVS.ProjectionMatrix = proj;
+	cBufferVS.Time = Time;
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 
 	// pixel
-	cBufferPS.ambientColor = { 0.5f, 0.5f, 0.5f, 1 };
-	cBufferPS.directionalLights[0] = dLights[0];
-	cBufferPS.pointLights[0] = pLights[0];
-	cBufferPS.time = t;
+	cBufferPS.AmbientColor = { 0.5f, 0.5f, 0.5f, 1 };
+	cBufferPS.DirectionalLights[0] = DirectionalLights[0];
+	cBufferPS.PointLights[0] = PointLights[0];
+	cBufferPS.Time = Time;
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
 
@@ -1618,8 +1618,8 @@ void Render()
 	// --- DRAW SKYBOX ---
 	DXDeviceContext->IASetVertexBuffers(0, 1, &SkyboxDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(SkyboxDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = XMMatrixTranslationFromVector(view1.r[3]);
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = XMMatrixTranslationFromVector(view1.r[3]);
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
@@ -1636,8 +1636,8 @@ void Render()
 	// ----- CUBE -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &CubeDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(CubeDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Cube;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Cube;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
@@ -1649,12 +1649,12 @@ void Render()
 	// ----- GROUND PLANE -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &GroundPlaneDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(GroundPlaneDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_GroundPlane;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_GroundPlane;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderInputColorLights, 0, 0);
 	DXDeviceContext->DrawIndexed(GroundPlaneIndexCount, 0, 0);
@@ -1663,12 +1663,12 @@ void Render()
 	// ----- BRAZIER01 -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &Brazier01DXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(Brazier01DXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &Brazier01DXShaderResourceView);
@@ -1678,12 +1678,12 @@ void Render()
 	// ----- SPACESHIP -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &SpaceshipDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(SpaceshipDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Spaceship;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Spaceship;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &SpaceshipDXShaderResourceView);
@@ -1693,12 +1693,12 @@ void Render()
 	// ----- SUN -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Sun;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Sun;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &SunDXShaderResourceView);
@@ -1708,12 +1708,12 @@ void Render()
 	// ----- EARTH -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Earth;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Earth;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &EarthDXShaderResourceView);
@@ -1723,12 +1723,12 @@ void Render()
 	// ----- MOON -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Moon;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Moon;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &MoonDXShaderResourceView);
@@ -1738,12 +1738,12 @@ void Render()
 	// ----- MARS -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Mars;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Mars;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &MarsDXShaderResourceView);
@@ -1753,12 +1753,12 @@ void Render()
 	// ----- JUPITER -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &PlanetDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(PlanetDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.worldMatrix = wrld_Jupiter;
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.WorldMatrix = wrld_Jupiter;
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
 	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
-	cBufferPS.instanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
+	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
 	DXDeviceContext->PSSetShaderResources(0, 1, &JupiterDXShaderResourceView);
@@ -1768,11 +1768,11 @@ void Render()
 	// ----- VISUAL LIGHTS -----
 	DXDeviceContext->IASetVertexBuffers(0, 1, &CubeDXVertexBuffer, strides, offsets);
 	DXDeviceContext->IASetIndexBuffer(CubeDXIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	cBufferVS.instanceOffsets[0] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[1] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[2] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[3] = XMMatrixIdentity();
-	cBufferVS.instanceOffsets[4] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[1] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[2] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[3] = XMMatrixIdentity();
+	cBufferVS.InstanceOffsets[4] = XMMatrixIdentity();
 	// size scaling
 	sizeScale = 1.5f;
 	// distance scaling
@@ -1781,13 +1781,13 @@ void Render()
 	sizeScale = 2.0f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	distScale = 10.0f;
-	for (UINT i = 0; i < LIGHTS_DIR; i++)
+	for (unsigned int i = 0; i < LIGHTS_DIR; ++i)
 	{
-		cBufferVS.worldMatrix = scale * XMMatrixTranslation(distScale * dLights[i].direction.x,
-			distScale * dLights[i].direction.y, distScale * dLights[i].direction.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
+			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.instanceColors[0] = dLights[i].color;
+		cBufferPS.InstanceColors[0] = DirectionalLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1796,12 +1796,12 @@ void Render()
 	// --- POINT ---
 	sizeScale = 0.25f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
-	for (UINT i = 0; i < LIGHTS_PNT; i++)
+	for (unsigned int i = 0; i < LIGHTS_PNT; ++i)
 	{
-		cBufferVS.worldMatrix = scale * XMMatrixTranslation(pLights[i].position.x, pLights[i].position.y, pLights[i].position.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.instanceColors[0] = pLights[i].color;
+		cBufferPS.InstanceColors[0] = PointLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);

@@ -32,7 +32,7 @@ void main(triangle S_GSINPUT _input[3], inout TriangleStream<S_GSOUTPUT> outputS
 		float3(1, 0, 0)
 	};
 
-	for (uint i = 0; i < 6; i++)
+	for (uint i = 0; i < 6; ++i)
 	{
 		if (i < 3)
 		{

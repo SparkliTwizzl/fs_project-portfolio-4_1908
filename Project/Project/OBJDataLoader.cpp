@@ -116,7 +116,7 @@ OBJMesh LoadOBJMesh(const char* filePath)
 				char faceSeparators[] = "/";
 
 				// convert tokens into vertices
-				for (unsigned int i = 1; i < tokens.size(); i++)
+				for (unsigned int i = 1; i < tokens.size(); ++i)
 				{
 					// copy token to split further
 					char extractFacesFrom[100];
@@ -162,7 +162,7 @@ OBJMesh LoadOBJMesh(const char* filePath)
 	inputFileStream.close();
 	// ----- PROCESS RAW DATA INTO LISTS -----
 	// ----- CONVERT LISTS INTO VERT / IND DATA -----
-	std::vector<uint3> vertDataNumList;
+	std::vector<uint3> rawVertexData;
 	std::vector<unsigned int> indexList;
 	// iterate through faces
 	for (unsigned int faceIndex = 0; faceIndex < faceList.size(); faceIndex++)
@@ -173,12 +173,12 @@ OBJMesh LoadOBJMesh(const char* filePath)
 			bool isUnique = true;
 			unsigned int index = 0;
 			// iterate through vertex list
-			for (unsigned int vertexListIndex = 0; vertexListIndex < vertDataNumList.size(); vertexListIndex++)
+			for (unsigned int vertexListIndex = 0; vertexListIndex < rawVertexData.size(); vertexListIndex++)
 			{
 				// check vert values against current list item values
-				if (faceList[faceIndex].Vertices[faceVertexIndex].x == vertDataNumList[vertexListIndex].x
-					&& faceList[faceIndex].Vertices[faceVertexIndex].y == vertDataNumList[vertexListIndex].y
-					&& faceList[faceIndex].Vertices[faceVertexIndex].z == vertDataNumList[vertexListIndex].z)
+				if (faceList[faceIndex].Vertices[faceVertexIndex].x == rawVertexData[vertexListIndex].x
+					&& faceList[faceIndex].Vertices[faceVertexIndex].y == rawVertexData[vertexListIndex].y
+					&& faceList[faceIndex].Vertices[faceVertexIndex].z == rawVertexData[vertexListIndex].z)
 				{
 					// vertex is duplicate, store index where it was found
 					isUnique = false;
@@ -189,8 +189,8 @@ OBJMesh LoadOBJMesh(const char* filePath)
 			// if vert is unique, add to list and store index where it was added
 			if (isUnique)
 			{
-				index = vertDataNumList.size();
-				vertDataNumList.push_back(faceList[faceIndex].Vertices[faceVertexIndex]);
+				index = rawVertexData.size();
+				rawVertexData.push_back(faceList[faceIndex].Vertices[faceVertexIndex]);
 			}
 			// add index of vert to list
 			indexList.push_back(index);
@@ -198,32 +198,32 @@ OBJMesh LoadOBJMesh(const char* filePath)
 	}
 	// ----- CONVERT LISTS INTO VERT / IND DATA -----
 	// ----- CONVERT VERT DATA INTO VERTS AND COPY INTO ARRAY -----
-	OBJVertex* vertices = new OBJVertex[vertDataNumList.size()];
-	for (unsigned int i = 0; i < vertDataNumList.size(); i++)
+	OBJVertex* vertices = new OBJVertex[rawVertexData.size()];
+	for (unsigned int i = 0; i < rawVertexData.size(); ++i)
 	{
 		OBJVertex vertex = {};
-		vertex.Position[0] = positionList[vertDataNumList[i].x].x;
-		vertex.Position[1] = positionList[vertDataNumList[i].x].y;
-		vertex.Position[2] = positionList[vertDataNumList[i].x].z;
-		vertex.Texel[0] = texelList[vertDataNumList[i].y].x;
-		vertex.Texel[1] = texelList[vertDataNumList[i].y].y;
-		vertex.Texel[2] = texelList[vertDataNumList[i].y].z;
-		vertex.Normal[0] = texelList[vertDataNumList[i].z].x;
-		vertex.Normal[1] = texelList[vertDataNumList[i].z].y;
-		vertex.Normal[2] = texelList[vertDataNumList[i].z].z;
+		vertex.Position[0] = positionList[rawVertexData[i].x].x;
+		vertex.Position[1] = positionList[rawVertexData[i].x].y;
+		vertex.Position[2] = positionList[rawVertexData[i].x].z;
+		vertex.Texel[0] = texelList[rawVertexData[i].y].x;
+		vertex.Texel[1] = texelList[rawVertexData[i].y].y;
+		vertex.Texel[2] = texelList[rawVertexData[i].y].z;
+		vertex.Normal[0] = texelList[rawVertexData[i].z].x;
+		vertex.Normal[1] = texelList[rawVertexData[i].z].y;
+		vertex.Normal[2] = texelList[rawVertexData[i].z].z;
 		vertices[i] = vertex;
 	}
 	// ----- CONVERT VERT DATA INTO VERTS AND COPY INTO ARRAY -----
 	// ----- COPY INDEX LIST INTO ARRAY -----
 	unsigned int* indices = new unsigned int[indexList.size()];
-	for (unsigned int i = 0; i < indexList.size(); i++)
+	for (unsigned int i = 0; i < indexList.size(); ++i)
 	{
 		indices[i] = indexList[i];
 	}
 	// ----- COPY INDEX LIST INTO ARRAY -----
 
 	rawMeshData.Vertices = vertices;
-	rawMeshData.VertexCount = vertDataNumList.size();
+	rawMeshData.VertexCount = rawVertexData.size();
 	rawMeshData.Indices = indices;
 	rawMeshData.IndexCount = indexList.size();
 	return rawMeshData;

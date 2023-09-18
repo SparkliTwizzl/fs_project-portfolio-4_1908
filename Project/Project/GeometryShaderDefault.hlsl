@@ -18,6 +18,7 @@ struct OutputData
 	float4 WorldPosition : WORLDPOSITION;
 };
 
+
 [maxvertexcount(3)]
 void main(triangle InputData input[3], inout TriangleStream<OutputData> outputStream)
 {
@@ -30,7 +31,7 @@ void main(triangle InputData input[3], inout TriangleStream<OutputData> outputSt
 		float3(0, 0, 1)
 	};
 
-	for (uint i = 0; i < 3; i++)
+	for (uint i = 0; i < 3; ++i)
 	{
 		output.Position = input[i].Position;
 		output.Normal = input[i].Normal;
