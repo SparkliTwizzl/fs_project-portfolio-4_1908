@@ -13,17 +13,17 @@
 #include "OBJDataLoader.h"
 
 // shaders
-#include "VS.csh"
-#include "VS_Distort.csh"
+#include "VertexShaderDefault.csh"
+#include "VertexShaderDistort.csh"
 #include "GeometryShaderDefault.csh"
 #include "GeometryShaderDistort.csh"
-#include "PS.csh"
-#include "PS_CubeMap.csh"
-#include "PS_Distort.csh"
-#include "PS_InputColor.csh"
-#include "PS_InputColorLights.csh"
-#include "PS_SolidColor.csh"
-#include "PS_SolidColorLights.csh"
+#include "PixelShaderDefault.csh"
+#include "PixelShaderCubeMap.csh"
+#include "PixelShaderDistort.csh"
+#include "PixelShaderInputColor.csh"
+#include "PixelShaderInputColorLights.csh"
+#include "PixelShaderSolidColor.csh"
+#include "PixelShaderSolidColorLights.csh"
 
 using namespace DirectX;
 // ---------- INCLUDES ----------
@@ -244,10 +244,10 @@ bool						g_defaultPS = true;
 // ---------- GLOBAL VARS ----------
 
 // Forward declarations of functions included in this code module:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+ATOM				MyRegisterClass(HINSTANCE hInstance);
+BOOL				InitInstance(HINSTANCE, int);
+LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 void				CreateProceduralGrid(Vertex, UINT, FLOAT, Vertex**, UINT&, UINT**, UINT&);
 void				ProcessOBJData(const char*, Vertex**, UINT&, UINT**, UINT&);
 HRESULT				InitDepthStencilView(UINT, UINT, ID3D11Texture2D**, ID3D11DepthStencilView**);
@@ -260,8 +260,8 @@ void				Cleanup();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR    lpCmdLine,
-	_In_ int       nCmdShow)
+	_In_ LPWSTR	lpCmdLine,
+	_In_ int	   nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -336,8 +336,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 //   COMMENTS:
 //
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
+//		In this function, we save the instance handle in a global variable and
+//		create and display the main program window.
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
@@ -473,20 +473,19 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	// ---------- VIEWPORTS ----------
 
 	// ---------- SHADERS ----------
-	// vertex
-	hr = DXDevice->CreateVertexShader(VS_Distort, sizeof(VS_Distort), nullptr, &g_p_VS_Distort);
-	hr = DXDevice->CreateVertexShader(VS, sizeof(VS), nullptr, &g_p_VS);
-	// geometry
 	hr = DXDevice->CreateGeometryShader(GeometryShaderDefault, sizeof(GeometryShaderDefault), nullptr, &g_p_GS);
 	hr = DXDevice->CreateGeometryShader(GeometryShaderDistort, sizeof(GeometryShaderDistort), nullptr, &g_p_GS_Distort);
-	// pixel
-	hr = DXDevice->CreatePixelShader(PS, sizeof(PS), nullptr, &g_p_PS);
-	hr = DXDevice->CreatePixelShader(PS_CubeMap, sizeof(PS_CubeMap), nullptr, &g_p_PS_CubeMap);
-	hr = DXDevice->CreatePixelShader(PS_Distort, sizeof(PS_Distort), nullptr, &g_p_PS_Distort);
-	hr = DXDevice->CreatePixelShader(PS_InputColor, sizeof(PS_InputColor), nullptr, &g_p_PS_InputColor);
-	hr = DXDevice->CreatePixelShader(PS_InputColorLights, sizeof(PS_InputColorLights), nullptr, &g_p_PS_InputColorLights);
-	hr = DXDevice->CreatePixelShader(PS_SolidColor, sizeof(PS_SolidColor), nullptr, &g_p_PS_SolidColor);
-	hr = DXDevice->CreatePixelShader(PS_SolidColorLights, sizeof(PS_SolidColorLights), nullptr, &g_p_PS_SolidColorLights);
+
+	hr = DXDevice->CreatePixelShader(PixelShaderDefault, sizeof(PixelShaderDefault), nullptr, &g_p_PS);
+	hr = DXDevice->CreatePixelShader(PixelShaderCubeMap, sizeof(PixelShaderCubeMap), nullptr, &g_p_PS_CubeMap);
+	hr = DXDevice->CreatePixelShader(PixelShaderDistort, sizeof(PixelShaderDistort), nullptr, &g_p_PS_Distort);
+	hr = DXDevice->CreatePixelShader(PixelShaderInputColor, sizeof(PixelShaderInputColor), nullptr, &g_p_PS_InputColor);
+	hr = DXDevice->CreatePixelShader(PixelShaderInputColorLights, sizeof(PixelShaderInputColorLights), nullptr, &g_p_PS_InputColorLights);
+	hr = DXDevice->CreatePixelShader(PixelShaderSolidColor, sizeof(PixelShaderSolidColor), nullptr, &g_p_PS_SolidColor);
+	hr = DXDevice->CreatePixelShader(PixelShaderSolidColorLights, sizeof(PixelShaderSolidColorLights), nullptr, &g_p_PS_SolidColorLights);
+
+	hr = DXDevice->CreateVertexShader(VertexShaderDefault, sizeof(VertexShaderDefault), nullptr, &g_p_VS);
+	hr = DXDevice->CreateVertexShader(VertexShaderDistort, sizeof(VertexShaderDistort), nullptr, &g_p_VS_Distort);
 	// ---------- SHADERS ----------
 
 	// ---------- INPUT LAYOUT ----------
@@ -500,7 +499,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	};
 	UINT numInputElements = ARRAYSIZE(inputElementDesc);
 	// create input layout
-	hr = DXDevice->CreateInputLayout(inputElementDesc, numInputElements, VS, sizeof(VS), &g_p_vertexLayout);
+	hr = DXDevice->CreateInputLayout(inputElementDesc, numInputElements, VertexShaderDefault, sizeof(VertexShaderDefault), &g_p_vertexLayout);
 	// set input layout
 	DXDeviceContext->IASetInputLayout(g_p_vertexLayout);
 	// ---------- INPUT LAYOUT ----------
@@ -642,7 +641,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  PURPOSE: Processes messages for the main window.
 //
 //  WM_COMMAND  - process the application menu
-//  WM_PAINT    - Paint the main window
+//  WM_PAINT	- Paint the main window
 //  WM_DESTROY  - post a quit message and return
 //
 //
@@ -668,13 +667,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	//case WM_PAINT:
-	//    {
-	//        PAINTSTRUCT ps;
-	//        HDC hdc = BeginPaint(hWnd, &ps);
-	//        // TODO: Add any drawing code that uses hdc here...
-	//        EndPaint(hWnd, &ps);
-	//    }
-	//    break;
+	//	{
+	//		PAINTSTRUCT ps;
+	//		HDC hdc = BeginPaint(hWnd, &ps);
+	//		// TODO: Add any drawing code that uses hdc here...
+	//		EndPaint(hWnd, &ps);
+	//	}
+	//	break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

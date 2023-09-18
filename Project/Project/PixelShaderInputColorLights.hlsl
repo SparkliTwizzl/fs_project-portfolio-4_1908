@@ -1,54 +1,50 @@
 #define MAX_INSTANCES 5
-#define MAX_LIGHTS_DIR 3
-#define MAX_LIGHTS_PNT 3
-#define MAX_LIGHTS_SPT 3
+#define MAX_DIRECTIONAL_LIGHTS 3
+#define MAX_POINT_LIGHTS 3
+#define MAX_SPOT_LIGHTS 3
 
 // LIGHT STRUCTS
 struct S_LIGHT_DIR
 {
-    float4 dir;
-    float4 color;
+	float4 dir;
+	float4 color;
 };
 struct S_LIGHT_PNT
 {
-    float4 pos;
-    float range;
-    float3 atten;
-    float4 color;
+	float4 pos;
+	float range;
+	float3 atten;
+	float4 color;
 };
 struct S_LIGHT_SPT
 {
-    float4 pos;
-    float4 dir;
-    float range;
-    float cone;
-    float3 atten;
-    float4 color;
+	float4 pos;
+	float4 dir;
+	float range;
+	float cone;
+	float3 atten;
+	float4 color;
 };
 
 // SHADER INPUT
 struct S_PSINPUT
 {
-    float4 pos : SV_POSITION;
-    float3 norm : NORMAL;
-    float3 tex : TEXCOORD;
-    float4 color : COLOR;
-    uint instanceID : SV_INSTANCEID;
-    float4 posWrld : WORLDPOSITION;
+	float4 pos : SV_POSITION;
+	float3 norm : NORMAL;
+	float3 tex : TEXCOORD;
+	float4 color : COLOR;
+	uint instanceID : SV_INSTANCEID;
+	float4 posWrld : WORLDPOSITION;
 };
-
-// SHADER VARIABLES
-Texture2D txDiffuse2D : register(t0);
-SamplerState samplerLinear : register(s0);
 
 // CONSTANT BUFFER
 cbuffer ConstantBuffer : register(b1)
 {
 	float4 ambientColor;
 	float4 instanceColors[MAX_INSTANCES];
-	S_LIGHT_DIR dLights[MAX_LIGHTS_DIR];
-	S_LIGHT_PNT pLights[MAX_LIGHTS_PNT];
-	//S_LIGHT_SPT sLights[MAX_LIGHTS_SPT];
+	S_LIGHT_DIR dLights[MAX_DIRECTIONAL_LIGHTS];
+	S_LIGHT_PNT pLights[MAX_POINT_LIGHTS];
+	//S_LIGHT_SPT sLights[MAX_SPOT_LIGHTS];
 	float t;
 	float3 pad;
 }
@@ -56,15 +52,11 @@ cbuffer ConstantBuffer : register(b1)
 // SHADER
 float4 main(S_PSINPUT _input) : SV_TARGET
 {
-	// texture
-    float2 tex = _input.tex.xy;
-    tex.x *= sin(tex.y * t);
-    tex.y *= cos(tex.x * t);
 	_input.norm = normalize(_input.norm);
-	float4 diffuse = txDiffuse2D.Sample(samplerLinear, tex);
+	float4 diffuse = _input.color;
 	float4 finalColor = float4(0, 0, 0, 0);
 	// point lights
-	for (unsigned int j = 0; j < MAX_LIGHTS_PNT; j++)
+	for (unsigned int j = 0; j < MAX_POINT_LIGHTS; j++)
 	{
 		float3 lightToPixelVector = pLights[j].pos.xyz - _input.posWrld.xyz;
 		float d = length(lightToPixelVector);
@@ -80,7 +72,7 @@ float4 main(S_PSINPUT _input) : SV_TARGET
 		}
 	}
 	// directional lights
-	for (unsigned int i = 0; i < MAX_LIGHTS_DIR; i++)
+	for (unsigned int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
 	{
 		finalColor += saturate(dot((float3) dLights[i].dir, _input.norm) * dLights[i].color);
 	}

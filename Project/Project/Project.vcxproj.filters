@@ -65,31 +65,31 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PS.hlsl">
+    <FxCompile Include="PixelShaderDefault.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="VS.hlsl">
+    <FxCompile Include="VertexShaderDefault.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="PS_CubeMap.hlsl">
+    <FxCompile Include="PixelShaderCubeMap.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="PS_InputColor.hlsl">
+    <FxCompile Include="PixelShaderInputColor.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="PS_SolidColor.hlsl">
+    <FxCompile Include="PixelShaderSolidColor.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="PS_Distort.hlsl">
+    <FxCompile Include="PixelShaderDistort.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="PS_SolidColorLights.hlsl">
+    <FxCompile Include="PixelShaderSolidColorLights.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="PS_InputColorLights.hlsl">
+    <FxCompile Include="PixelShaderInputColorLights.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
-    <FxCompile Include="VS_Distort.hlsl">
+    <FxCompile Include="VertexShaderDistort.hlsl">
       <Filter>Shader Files</Filter>
     </FxCompile>
     <FxCompile Include="GeometryShaderDefault.hlsl">

@@ -1,7 +1,7 @@
 #define MAX_INSTANCES 5
-#define MAX_LIGHTS_DIR 3
-#define MAX_LIGHTS_PNT 3
-#define MAX_LIGHTS_SPT 3
+#define MAX_DIRECTIONAL_LIGHTS 3
+#define MAX_POINT_LIGHTS 3
+#define MAX_SPOT_LIGHTS 3
 
 // LIGHT STRUCTS
 struct S_LIGHT_DIR
@@ -37,14 +37,18 @@ struct S_PSINPUT
 	float4 posWrld : WORLDPOSITION;
 };
 
+// SHADER VARIABLES
+Texture2D txDiffuse2D : register(t0);
+SamplerState samplerLinear : register(s0);
+
 // CONSTANT BUFFER
 cbuffer ConstantBuffer : register(b1)
 {
 	float4 ambientColor;
 	float4 instanceColors[MAX_INSTANCES];
-	S_LIGHT_DIR dLights[MAX_LIGHTS_DIR];
-	S_LIGHT_PNT pLights[MAX_LIGHTS_PNT];
-	//S_LIGHT_SPT sLights[MAX_LIGHTS_SPT];
+	S_LIGHT_DIR dLights[MAX_DIRECTIONAL_LIGHTS];
+	S_LIGHT_PNT pLights[MAX_POINT_LIGHTS];
+	//S_LIGHT_SPT sLights[MAX_SPOT_LIGHTS];
 	float t;
 	float3 pad;
 }
@@ -52,10 +56,15 @@ cbuffer ConstantBuffer : register(b1)
 // SHADER
 float4 main(S_PSINPUT _input) : SV_TARGET
 {
+	// texture
+	float2 tex = _input.tex.xy;
+	tex.x *= sin(tex.y * t);
+	tex.y *= cos(tex.x * t);
 	_input.norm = normalize(_input.norm);
+	float4 diffuse = txDiffuse2D.Sample(samplerLinear, tex);
 	float4 finalColor = float4(0, 0, 0, 0);
 	// point lights
-	for (unsigned int j = 0; j < MAX_LIGHTS_PNT; j++)
+	for (unsigned int j = 0; j < MAX_POINT_LIGHTS; j++)
 	{
 		float3 lightToPixelVector = pLights[j].pos.xyz - _input.posWrld.xyz;
 		float d = length(lightToPixelVector);
@@ -65,17 +74,17 @@ float4 main(S_PSINPUT _input) : SV_TARGET
 			float lightIntensity = dot(lightToPixelVector, _input.norm);
 			if (lightIntensity > 0)
 			{
-				finalColor += lightIntensity * pLights[j].color;
+				finalColor += lightIntensity * diffuse * pLights[j].color;
 				finalColor /= pLights[j].atten[0] + (pLights[j].atten[1] * d) + (pLights[j].atten[2] * (d * d));
 			}
 		}
 	}
 	// directional lights
-	for (unsigned int i = 0; i < MAX_LIGHTS_DIR; i++)
+	for (unsigned int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
 	{
 		finalColor += saturate(dot((float3) dLights[i].dir, _input.norm) * dLights[i].color);
 	}
-	finalColor = saturate(finalColor + ambientColor);
+	finalColor = saturate(finalColor + (ambientColor * diffuse));
 	finalColor.a = 1;
 	return finalColor;
 }
