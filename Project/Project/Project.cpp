@@ -215,7 +215,7 @@ bool ShouldUseDefaultPixelShader = true;
 
 // function forward definitions, aka Pain™
 ATOM MyRegisterClass(HINSTANCE hInstance);
-BOOL InitInstance(HINSTANCE, int);
+bool InitializeInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, unsigned int, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, unsigned int, WPARAM, LPARAM);
 void CreateProceduralGrid(Vertex, unsigned int, float, Vertex**, unsigned int&, unsigned int**, unsigned int&);
@@ -227,6 +227,7 @@ HRESULT InitializeConstantBuffer(unsigned int, ID3D11Buffer**);
 HRESULT InitializeSamplerState(ID3D11SamplerState**);
 void Render();
 void Cleanup();
+
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -242,7 +243,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	// initialize application
-	if (!InitInstance(hInstance, nCmdShow))
+	if (!InitializeInstance(hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
@@ -269,8 +270,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	return (int)msg.wParam;
 }
 
-
-
 //
 //  FUNCTION: MyRegisterClass()
 //
@@ -294,6 +293,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	return RegisterClassExW(&wcex);
 }
 
+
 //
 //   FUNCTION: InitInstance(HINSTANCE, int)
 //
@@ -304,7 +304,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //		In this function, we save the instance handle in a global variable and
 //		create and display the main program window.
 //
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+bool InitializeInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	CurrentHInstance = hInstance; // Store instance handle in our global variable
 
@@ -898,8 +898,8 @@ void Render()
 #define LIGHTS_DIR 1
 	DirectionalLight DirectionalLights[MAX_DIRECTIONAL_LIGHTS] =
 	{
-		// Direction, Color
-		{ { 0, 1, 0, 0 }, { 0, 0, 1, 1 } },
+		// Color, Direction
+		{ { 0, 0, 1, 1 }, { 0, 1, 0, 0 } },
 		{},
 		{}
 	};
@@ -907,8 +907,8 @@ void Render()
 #define LIGHTS_PNT 1
 	PointLight PointLights[MAX_POINT_LIGHTS] =
 	{
-		// Position, Range, Attenuation, Color
-		{ { 1.5f, 0.5, 0, 1 }, 10, { 0, 0, 0.5f}, { 0, 1, 0, 1 } },
+		// Color, Position, Range, Attenuation
+		{ { 0, 1, 0, 1 }, { 1.5f, 0.5, 0, 1 }, 10, { 0, 0, 0.5f} },
 		{},
 		{}
 	};

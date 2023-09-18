@@ -6,26 +6,26 @@
 
 struct DirectionalLight
 {
-	float4 Direction;
 	float4 Color;
+	float4 Direction;
 };
 
 struct PointLight
 {
+	float4 Color;
 	float4 Position;
 	float Range;
 	float3 Attenuation;
-	float4 Color;
 };
 
 struct SpotLight
 {
+	float4 Color;
 	float4 Position;
 	float4 Direction;
 	float Range;
-	float Cone;
 	float3 Attenuation;
-	float4 Color;
+	float Cone;
 };
 
 
