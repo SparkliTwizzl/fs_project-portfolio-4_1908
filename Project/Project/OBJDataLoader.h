@@ -1,18 +1,18 @@
 #pragma once
 
-struct S_OBJ_VERT
+struct OBJVertex
 {
-	float pos[3];
-	float tex[3];
-	float norm[3];
+	float Position[3];
+	float Texel[3];
+	float Normal[3];
 };
 
-struct S_OBJ_DATA
+struct OBJMesh
 {
-	S_OBJ_VERT* vertices;
-	unsigned int numVerts;
-	unsigned int* indices;
-	unsigned int numInds;
+	OBJVertex* Vertices;
+	unsigned int VertexCount;
+	unsigned int* Indices;
+	unsigned int IndexCount;
 };
 
-S_OBJ_DATA LoadOBJData(const char*);
+OBJMesh LoadOBJMesh(const char* filePath);
