@@ -4,24 +4,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
-//#include <algorithm>
 
 using std::vector;
 
-
-struct float3
-{
-	float x;
-	float y;
-	float z;
-};
-
-struct uint3
-{
-	unsigned int x;
-	unsigned int y;
-	unsigned int z;
-};
 
 struct OBJTriangle
 {
@@ -202,15 +187,15 @@ OBJMesh LoadOBJMesh(const char* filePath)
 	for (unsigned int i = 0; i < rawVertexData.size(); ++i)
 	{
 		OBJVertex vertex = {};
-		vertex.Position[0] = positionList[rawVertexData[i].x].x;
-		vertex.Position[1] = positionList[rawVertexData[i].x].y;
-		vertex.Position[2] = positionList[rawVertexData[i].x].z;
-		vertex.Texel[0] = texelList[rawVertexData[i].y].x;
-		vertex.Texel[1] = texelList[rawVertexData[i].y].y;
-		vertex.Texel[2] = texelList[rawVertexData[i].y].z;
-		vertex.Normal[0] = texelList[rawVertexData[i].z].x;
-		vertex.Normal[1] = texelList[rawVertexData[i].z].y;
-		vertex.Normal[2] = texelList[rawVertexData[i].z].z;
+		vertex.Position.x = positionList[rawVertexData[i].x].x;
+		vertex.Position.y = positionList[rawVertexData[i].x].y;
+		vertex.Position.z = positionList[rawVertexData[i].x].z;
+		vertex.Texel.x = texelList[rawVertexData[i].y].x;
+		vertex.Texel.y = texelList[rawVertexData[i].y].y;
+		vertex.Texel.z = texelList[rawVertexData[i].y].z;
+		vertex.Normal.x = texelList[rawVertexData[i].z].x;
+		vertex.Normal.y = texelList[rawVertexData[i].z].y;
+		vertex.Normal.z = texelList[rawVertexData[i].z].z;
 		vertices[i] = vertex;
 	}
 	// ----- CONVERT VERT DATA INTO VERTS AND COPY INTO ARRAY -----

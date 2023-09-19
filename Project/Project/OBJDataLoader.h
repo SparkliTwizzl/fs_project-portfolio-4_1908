@@ -1,10 +1,13 @@
 #pragma once
 
+#include "DataTypes.h"
+
+
 struct OBJVertex
 {
-	float Position[3];
-	float Texel[3];
-	float Normal[3];
+	float3 Position;
+	float3 Texel;
+	float3 Normal;
 };
 
 struct OBJMesh

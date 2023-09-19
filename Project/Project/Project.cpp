@@ -730,19 +730,19 @@ void ProcessOBJMesh(const char* _filepath, Vertex** _pp_verts, unsigned int& ver
 	for (unsigned int i = 0; i < vertexCount; ++i)
 	{
 		// copy position
-		vertices[i].Position.x = RawMeshData.Vertices[i].Position[0];
-		vertices[i].Position.y = RawMeshData.Vertices[i].Position[1];
-		vertices[i].Position.z = RawMeshData.Vertices[i].Position[2];
+		vertices[i].Position.x = RawMeshData.Vertices[i].Position.x;
+		vertices[i].Position.y = RawMeshData.Vertices[i].Position.y;
+		vertices[i].Position.z = RawMeshData.Vertices[i].Position.z;
 		vertices[i].Position.w = 1;
 		// copy normal
-		vertices[i].Normal.x = RawMeshData.Vertices[i].Normal[0];
-		vertices[i].Normal.y = RawMeshData.Vertices[i].Normal[1];
-		vertices[i].Normal.z = RawMeshData.Vertices[i].Normal[2];
+		vertices[i].Normal.x = RawMeshData.Vertices[i].Normal.x;
+		vertices[i].Normal.y = RawMeshData.Vertices[i].Normal.y;
+		vertices[i].Normal.z = RawMeshData.Vertices[i].Normal.z;
 		// copy texcoord
-		vertices[i].Texel.x = RawMeshData.Vertices[i].Texel[0];
-		vertices[i].Texel.y = RawMeshData.Vertices[i].Texel[1];
-		vertices[i].Texel.z = RawMeshData.Vertices[i].Texel[2];
-		// set Color
+		vertices[i].Texel.x = RawMeshData.Vertices[i].Texel.x;
+		vertices[i].Texel.y = RawMeshData.Vertices[i].Texel.y;
+		vertices[i].Texel.z = RawMeshData.Vertices[i].Texel.z;
+		// set color
 		vertices[i].Color = { 1, 1, 1, 1 };
 	}
 	*_pp_verts = vertices;

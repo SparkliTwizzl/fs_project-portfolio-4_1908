@@ -39,6 +39,9 @@
     <ClInclude Include="ControlMapping.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="DataTypes.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
