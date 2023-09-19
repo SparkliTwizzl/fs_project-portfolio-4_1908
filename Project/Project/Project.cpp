@@ -895,22 +895,22 @@ void Render()
 
 	// ----- LIGHTS -----
 	// directional
-#define LIGHTS_DIR 1
+#define DIRECTIONAL_LIGHT_COUNT 1
 	DirectionalLight DirectionalLights[MAX_DIRECTIONAL_LIGHTS] =
 	{
 		// Color, Direction
 		{ { 0, 0, 1, 1 }, { 0, 1, 0, 0 } },
 		{},
-		{}
+		{},
 	};
 	// point
-#define LIGHTS_PNT 1
+#define POINT_LIGHT_COUNT 1
 	PointLight PointLights[MAX_POINT_LIGHTS] =
 	{
 		// Color, Position, Range, Attenuation
 		{ { 0, 1, 0, 1 }, { 1.5f, 0.5, 0, 1 }, 10, { 0, 0, 0.5f} },
 		{},
-		{}
+		{},
 	};
 	// spot
 	SpotLight SpotLights[MAX_SPOT_LIGHTS] = {};
@@ -1314,7 +1314,7 @@ void Render()
 	sizeScale = 2.0f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	distScale = 10.0f;
-	for (unsigned int i = 0; i < LIGHTS_DIR; ++i)
+	for (unsigned int i = 0; i < DIRECTIONAL_LIGHT_COUNT; ++i)
 	{
 		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
 			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
@@ -1329,7 +1329,7 @@ void Render()
 	// --- POINT ---
 	sizeScale = 0.25f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
-	for (unsigned int i = 0; i < LIGHTS_PNT; ++i)
+	for (unsigned int i = 0; i < POINT_LIGHT_COUNT; ++i)
 	{
 		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
@@ -1552,7 +1552,7 @@ void Render()
 	sizeScale = 2.0f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	distScale = 10.0f;
-	for (unsigned int i = 0; i < LIGHTS_DIR; ++i)
+	for (unsigned int i = 0; i < DIRECTIONAL_LIGHT_COUNT; ++i)
 	{
 		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
 			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
@@ -1567,7 +1567,7 @@ void Render()
 	// --- POINT ---
 	sizeScale = 0.25f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
-	for (unsigned int i = 0; i < LIGHTS_PNT; ++i)
+	for (unsigned int i = 0; i < POINT_LIGHT_COUNT; ++i)
 	{
 		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
@@ -1781,7 +1781,7 @@ void Render()
 	sizeScale = 2.0f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	distScale = 10.0f;
-	for (unsigned int i = 0; i < LIGHTS_DIR; ++i)
+	for (unsigned int i = 0; i < DIRECTIONAL_LIGHT_COUNT; ++i)
 	{
 		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
 			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
@@ -1796,7 +1796,7 @@ void Render()
 	// --- POINT ---
 	sizeScale = 0.25f;
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
-	for (unsigned int i = 0; i < LIGHTS_PNT; ++i)
+	for (unsigned int i = 0; i < POINT_LIGHT_COUNT; ++i)
 	{
 		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
