@@ -1,18 +1,10 @@
 #include "stdafx.h"
 #include "Project.h"
 
-#include <iostream>
-
-// DirectX
-#include <d3d11.h>
-#include <DirectXMath.h>
-#pragma comment(lib, "d3d11.lib")
+#include "ControlMapping.h"
 #include "DDSTextureLoader.h"
-
-// OBJ
 #include "OBJDataLoader.h"
 
-// shaders
 #include "VertexShaderDefault.csh"
 #include "VertexShaderDistort.csh"
 #include "GeometryShaderDefault.csh"
@@ -24,6 +16,11 @@
 #include "PixelShaderInputColorLights.csh"
 #include "PixelShaderSolidColor.csh"
 #include "PixelShaderSolidColorLights.csh"
+
+#include <d3d11.h>
+#include <DirectXMath.h>
+#pragma comment(lib, "d3d11.lib")
+#include <iostream>
 
 using namespace DirectX;
 
@@ -845,8 +842,8 @@ void Render()
 	ULONGLONG timeCur = GetTickCount64();
 	if (timeStart == 0)
 		timeStart = timeCur;
-	float Time = (timeCur - timeStart) / 1000.0f;
-	float dt = (timeCur - timePrev) / 1000.0f;
+	float time = (timeCur - timeStart) / 1000.0f;
+	float deltaTime = (timeCur - timePrev) / 1000.0f;
 	timePrev = timeCur;
 	// ----- UPDATE TIME -----
 
@@ -879,7 +876,7 @@ void Render()
 	// ----- RETRIEVE MATRICES -----
 	XMMATRIX wrld = XMLoadFloat4x4(&WorldMatrix);
 	XMMATRIX view = XMLoadFloat4x4(&ViewMatrix);
-	XMMATRIX proj = XMLoadFloat4x4(&ProjectionMatrix);
+	XMMATRIX projectionMatrix = XMLoadFloat4x4(&ProjectionMatrix);
 	XMMATRIX proj_RTT = XMLoadFloat4x4(&RenderToTextureProjectionMatrix);
 	XMMATRIX wrld_Skybox = XMLoadFloat4x4(&SkyboxWorldMatrix);
 	XMMATRIX wrld_Cube = XMLoadFloat4x4(&CubeWorldMatrix);
@@ -896,7 +893,7 @@ void Render()
 	// ----- LIGHTS -----
 	// directional
 #define DIRECTIONAL_LIGHT_COUNT 1
-	DirectionalLight DirectionalLights[MAX_DIRECTIONAL_LIGHTS] =
+	DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS] =
 	{
 		// Color, Direction
 		{ { 0, 0, 1, 1 }, { 0, 1, 0, 0 } },
@@ -905,7 +902,7 @@ void Render()
 	};
 	// point
 #define POINT_LIGHT_COUNT 1
-	PointLight PointLights[MAX_POINT_LIGHTS] =
+	PointLight pointLights[MAX_POINT_LIGHTS] =
 	{
 		// Color, Position, Range, Attenuation
 		{ { 0, 1, 0, 1 }, { 1.5f, 0.5, 0, 1 }, 10, { 0, 0, 0.5f} },
@@ -919,7 +916,7 @@ void Render()
 	// ----- UPDATE WORLD POSITIONS -----
 	// --- CUBE ---
 	// orbit about origin
-	rotate = XMMatrixRotationY(0.5f * Time);
+	rotate = XMMatrixRotationY(0.5f * time);
 	wrld_Cube = XMMatrixTranslation(2.5f, 6, 0) * rotate;
 	// --- CUBE ---
 	// --- GROUND PLANE ---
@@ -927,192 +924,191 @@ void Render()
 	// --- GROUND PLANE ---
 	// --- SPACESHIP ---
 	// orbit about origin
-	rotate = XMMatrixRotationY(-1.3f * Time);
+	rotate = XMMatrixRotationY(-1.3f * time);
 	wrld_Spaceship = XMMatrixTranslation(5, 2, 0) * rotate;
 	// --- SPACESHIP ---
 	// --- SUN ---
 	// spin
 	scale = XMMatrixScaling(1.2f, 1.2f, 1.2f);
-	rotate = XMMatrixRotationY(0.1f * Time);
+	rotate = XMMatrixRotationY(0.1f * time);
 	wrld_Sun = scale * rotate * XMMatrixTranslation(0, 3, 0);
 	// --- SUN ---
 	// --- EARTH ---
 	// orbit about origin
 	scale = XMMatrixScaling(0.4f, 0.4f, 0.4f);
-	rotate = XMMatrixRotationY(0.74f * Time);
+	rotate = XMMatrixRotationY(0.74f * time);
 	wrld_Earth = scale * XMMatrixTranslation(3, 3, -2) * rotate;
 	// spin
-	rotate = XMMatrixRotationY(2.1f * Time);
+	rotate = XMMatrixRotationY(2.1f * time);
 	wrld_Earth = rotate * wrld_Earth;
 	// --- EARTH ---
 	// --- MOON ---
 	// orbit about earth
 	scale = XMMatrixScaling(0.2f, 0.2f, 0.2f);
-	rotate = XMMatrixRotationY(0.4f * Time);
+	rotate = XMMatrixRotationY(0.4f * time);
 	wrld_Moon = scale * XMMatrixTranslation(2, 0, 0) * rotate * wrld_Earth;
 	// --- MOON ---
 	// --- MARS ---
 	// orbit about origin
 	scale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
-	rotate = XMMatrixRotationY(0.53f * Time);
+	rotate = XMMatrixRotationY(0.53f * time);
 	wrld_Mars = scale * XMMatrixTranslation(4, 3, 3) * rotate;
 	// spin
-	rotate = XMMatrixRotationY(1.6f * Time);
+	rotate = XMMatrixRotationY(1.6f * time);
 	wrld_Mars = rotate * wrld_Mars;
 	// --- MARS ---
 	// --- JUPITER ---
 	// orbit about origin
 	scale = XMMatrixScaling(0.7f, 0.7f, 0.7f);
-	rotate = XMMatrixRotationY(0.31f * Time);
+	rotate = XMMatrixRotationY(0.31f * time);
 	wrld_Jupiter = scale * XMMatrixTranslation(6, 3, -3) * rotate;
 	// spin
-	rotate = XMMatrixRotationY(1.2f * Time);
+	rotate = XMMatrixRotationY(1.2f * time);
 	wrld_Jupiter = rotate * wrld_Jupiter;
 	// --- JUPITER ---
 	// --- LIGHTS ---
 	// DLIGHT 0
-	XMMATRIX lightMatrix = XMMatrixTranslation(DirectionalLights[0].Direction.x, DirectionalLights[0].Direction.y, DirectionalLights[0].Direction.z);
-	rotate = XMMatrixRotationZ(0.4f * Time);
-	XMStoreFloat4(&DirectionalLights[0].Direction, (lightMatrix * rotate).r[3]);
-	// PLIGHT 0
-	lightMatrix = XMMatrixTranslation(PointLights[0].Position.x, PointLights[0].Position.y, PointLights[0].Position.z);
-	rotate = XMMatrixRotationY(0.7f * Time);
-	XMStoreFloat4(&PointLights[0].Position, (lightMatrix * rotate).r[3]);
+	XMMATRIX lightMatrix = XMMatrixTranslation(directionalLights[0].Direction.x, directionalLights[0].Direction.y, directionalLights[0].Direction.z);
+	rotate = XMMatrixRotationZ(0.4f * time);
+	XMStoreFloat4(&directionalLights[0].Direction, (lightMatrix * rotate).r[3]);
+	// point light 0
+	lightMatrix = XMMatrixTranslation(pointLights[0].Position.x, pointLights[0].Position.y, pointLights[0].Position.z);
+	rotate = XMMatrixRotationY(0.7f * time);
+	XMStoreFloat4(&pointLights[0].Position, (lightMatrix * rotate).r[3]);
 	// --- LIGHTS ---
 	// ----- UPDATE WORLD POSITIONS -----
 
 	// ----- HANDLE TOGGLES -----
 	// camera
-	static bool keyHeld_freelook = false;
-	bool keyPressed_freelook = GetAsyncKeyState('C');
-	if (!keyHeld_freelook && keyPressed_freelook) // toggle freelook
+	static bool isFreelookKeyHeld = false;
+	bool isFreelookKeyPressed = GetAsyncKeyState(KeyToggleFreelook);
+	if (!isFreelookKeyHeld && isFreelookKeyPressed) // toggle freelook
 	{
-		keyHeld_freelook = true;
+		isFreelookKeyHeld = true;
 		IsFreelookEnabled = !IsFreelookEnabled;
 	}
-	if (keyHeld_freelook && !keyPressed_freelook) // reset freelook held flag
+	if (isFreelookKeyHeld && !isFreelookKeyPressed) // reset key held flag
 	{
-		keyHeld_freelook = false;
-	}
-	// vertex shader
-	static bool keyHeld_defaultVS = false;
-	bool keyPressed_defaultVS = GetAsyncKeyState('1');
-	if (!keyHeld_defaultVS && keyPressed_defaultVS) // toggle defaultVS
-	{
-		keyHeld_defaultVS = true;
-		ShouldUsedDefaultVertexShader = !ShouldUsedDefaultVertexShader;
-	}
-	if (keyHeld_defaultVS && !keyPressed_defaultVS) // reset defaultVS held flag
-	{
-		keyHeld_defaultVS = false;
+		isFreelookKeyHeld = false;
 	}
 	// geometry shader
-	static bool keyHeld_defaultGS = false;
-	bool keyPressed_defaultGS = GetAsyncKeyState('2');
-	if (!keyHeld_defaultGS && keyPressed_defaultGS) // toggle defaultGS
+	static bool isUseDefaultGeometryShaderKeyHeld = false;
+	bool isUseDefaultGeometryShaderKeyPressed = GetAsyncKeyState(KeyToggleGeometryShader);
+	if (!isUseDefaultGeometryShaderKeyHeld && isUseDefaultGeometryShaderKeyPressed) // toggle active geometry shader
 	{
-		keyHeld_defaultGS = true;
+		isUseDefaultGeometryShaderKeyHeld = true;
 		ShouldUseDefaultGeometryShader = !ShouldUseDefaultGeometryShader;
 	}
-	if (keyHeld_defaultGS && !keyPressed_defaultGS) // reset defaultGS held flag
+	if (isUseDefaultGeometryShaderKeyHeld && !isUseDefaultGeometryShaderKeyPressed) // reset key held flag
 	{
-		keyHeld_defaultGS = false;
+		isUseDefaultGeometryShaderKeyHeld = false;
 	}
 	// pixel shader
-	static bool keyHeld_defaultPS = false;
-	bool keyPressed_defaultPS = GetAsyncKeyState('3');
-	if (!keyHeld_defaultPS && keyPressed_defaultPS) // toggle defaultPS
+	static bool isUseDefaultPixelShaderKeyHeld = false;
+	bool isUseDefaultPixelShaderKeyPressed = GetAsyncKeyState(KeyTogglePixelShader);
+	if (!isUseDefaultPixelShaderKeyHeld && isUseDefaultPixelShaderKeyPressed) // toggle active pixel shader
 	{
-		keyHeld_defaultPS = true;
+		isUseDefaultPixelShaderKeyHeld = true;
 		ShouldUseDefaultPixelShader = !ShouldUseDefaultPixelShader;
 	}
-	if (keyHeld_defaultPS && !keyPressed_defaultPS) // reset defaultPS held flag
+	if (isUseDefaultPixelShaderKeyHeld && !isUseDefaultPixelShaderKeyPressed) // reset key held flag
 	{
-		keyHeld_defaultPS = false;
+		isUseDefaultPixelShaderKeyHeld = false;
+	}
+	// vertex shader
+	static bool isUseDefaultVertexShaderKeyHeld = false;
+	bool isUseDefaultVertexShaderKeyPressed = GetAsyncKeyState(KeyToggleVertexShader);
+	if (!isUseDefaultVertexShaderKeyHeld && isUseDefaultVertexShaderKeyPressed) // toggle active vertex shader
+	{
+		isUseDefaultVertexShaderKeyHeld = true;
+		ShouldUsedDefaultVertexShader = !ShouldUsedDefaultVertexShader;
+	}
+	if (isUseDefaultVertexShaderKeyHeld && !isUseDefaultVertexShaderKeyPressed) // reset key held flag
+	{
+		isUseDefaultVertexShaderKeyHeld = false;
 	}
 	// ----- HANDLE TOGGLES -----
 
 	// ----- UPDATE CAMERA -----
-	// -- POSITION --
-	float x, y, z;
-	x = y = z = 0.0f;
-	if (GetAsyncKeyState('A'))			x -= CameraMoveSpeed * dt; // move left
-	if (GetAsyncKeyState('D'))			x += CameraMoveSpeed * dt; // move right
-	if (GetAsyncKeyState(VK_LSHIFT))	y -= CameraMoveSpeed * dt; // move down
-	if (GetAsyncKeyState(VK_SPACE))		y += CameraMoveSpeed * dt; // move up
-	if (GetAsyncKeyState('S'))			z -= CameraMoveSpeed * dt; // move backward
-	if (GetAsyncKeyState('W'))			z += CameraMoveSpeed * dt; // move forward
-	// apply offset
-	//view = (XMMatrixTranslation(x, 0, z) * view) * XMMatrixTranslation(0, y, 0);
-	view = XMMatrixTranslation(x, y, z) * view;
-	// -- POSITION --
-	// -- ROTATION --
-	float xr, yr;
-	xr = yr = 0.0f;
-	if (GetAsyncKeyState(VK_UP))	xr -= DEGREES_TO_RADIANS(CameraRotationSpeed) * dt; // rotate upward
-	if (GetAsyncKeyState(VK_DOWN))	xr += DEGREES_TO_RADIANS(CameraRotationSpeed) * dt; // rotate downward
-	if (GetAsyncKeyState(VK_LEFT))	yr -= DEGREES_TO_RADIANS(CameraRotationSpeed) * dt; // rotate left
-	if (GetAsyncKeyState(VK_RIGHT))	yr += DEGREES_TO_RADIANS(CameraRotationSpeed) * dt; // rotate right
-	// apply rotation
-	XMVECTOR camPos = view.r[3];
-	view = view * XMMatrixTranslationFromVector(-1 * camPos);
-	view = XMMatrixRotationX(xr) * (view * XMMatrixRotationY(yr));
-	view = view * XMMatrixTranslationFromVector(camPos);
-	// -- ROTATION --
+	float cameraPositionX = 0.0f;
+	float cameraPositionY = 0.0f;
+	float cameraPositionZ = 0.0f;
+	float cameraMoveDistance = CameraMoveSpeed * deltaTime;
+	if (GetAsyncKeyState(KeyMoveLeft)) cameraPositionX -= cameraMoveDistance;
+	if (GetAsyncKeyState(KeyMoveRight)) cameraPositionX += cameraMoveDistance;
+	if (GetAsyncKeyState(KeyMoveDown)) cameraPositionY -= cameraMoveDistance;
+	if (GetAsyncKeyState(KeyMoveUp)) cameraPositionY += cameraMoveDistance;
+	if (GetAsyncKeyState(KeyMoveBackward)) cameraPositionZ -= cameraMoveDistance;
+	if (GetAsyncKeyState(KeyMoveForward)) cameraPositionZ += cameraMoveDistance;
+	view = XMMatrixTranslation(cameraPositionX, cameraPositionY, cameraPositionZ) * view; // apply camera move to view matrix
+
+	float cameraRotationX = 0.0f;
+	float cameraRotationY = 0.0f;
+	float cameraRotationAngle = DEGREES_TO_RADIANS(CameraRotationSpeed) * deltaTime;
+	if (GetAsyncKeyState(KeyLookUp)) cameraRotationX -= cameraRotationAngle;
+	if (GetAsyncKeyState(KeyLookDown)) cameraRotationX += cameraRotationAngle;
+	if (GetAsyncKeyState(KeyLookLeft)) cameraRotationY -= cameraRotationAngle;
+	if (GetAsyncKeyState(KeyLookRight)) cameraRotationY += cameraRotationAngle;
+	// apply rotation to view matrix
+	XMVECTOR cameraPositionVector = view.r[3];
+	view = view * XMMatrixTranslationFromVector(-1 * cameraPositionVector);
+	view = XMMatrixRotationX(cameraRotationX) * (view * XMMatrixRotationY(cameraRotationY));
+	view = view * XMMatrixTranslationFromVector(cameraPositionVector);
+
 	// -- ZOOM --
-	if (GetAsyncKeyState(VK_OEM_MINUS)) // zoom out
+	if (GetAsyncKeyState(KeyZoomOut))
 	{
-		CameraZoomLevel -= CameraMoveSpeed * dt;
+		CameraZoomLevel -= cameraMoveDistance;
 		if (CameraZoomLevel < CameraMinZoom)
 			CameraZoomLevel = CameraMinZoom;
 	}
-	if (GetAsyncKeyState(VK_OEM_PLUS)) // zoom in
+	if (GetAsyncKeyState(KeyZoomIn))
 	{
-		CameraZoomLevel += CameraMoveSpeed * dt;
+		CameraZoomLevel += cameraMoveDistance;
 		if (CameraZoomLevel > CameraMaxZoom)
 			CameraZoomLevel = CameraMaxZoom;
 	}
-	// -- ZOOM --
+
 	// -- NEAR / FAR PLANES --
-	if (GetAsyncKeyState(VK_OEM_4)) // far plane closer
+	if (GetAsyncKeyState(KeyFarPlaneIn))
 	{
-		CameraFarPlaneDistance -= CameraFarPlaneMoveSpeed * dt;
+		CameraFarPlaneDistance -= CameraFarPlaneMoveSpeed * deltaTime;
 		if (CameraFarPlaneDistance < CameraFarPlaneMinDistance)
 			CameraFarPlaneDistance = CameraFarPlaneMinDistance;
 	}
-	if (GetAsyncKeyState(VK_OEM_6)) // far plane farther
+	if (GetAsyncKeyState(KeyFarPlaneOut))
 	{
-		CameraFarPlaneDistance += CameraFarPlaneMoveSpeed * dt;
+		CameraFarPlaneDistance += CameraFarPlaneMoveSpeed * deltaTime;
 		if (CameraFarPlaneDistance > CameraFarPlaneMaxDistance)
 			CameraFarPlaneDistance = CameraFarPlaneMaxDistance;
 	}
-	if (GetAsyncKeyState(VK_OEM_1)) // near plane closer
+	if (GetAsyncKeyState(KeyNearPlaneIn))
 	{
-		CameraNearPlaneDistance -= CameraNearPlaneMoveSpeed * dt;
+		CameraNearPlaneDistance -= CameraNearPlaneMoveSpeed * deltaTime;
 		if (CameraNearPlaneDistance < CameraNearPlaneMinDistance)
 			CameraNearPlaneDistance = CameraNearPlaneMinDistance;
 	}
-	if (GetAsyncKeyState(VK_OEM_7)) // near plane farther
+	if (GetAsyncKeyState(KeyNearPlaneOut))
 	{
-		CameraNearPlaneDistance += CameraNearPlaneMoveSpeed * dt;
+		CameraNearPlaneDistance += CameraNearPlaneMoveSpeed * deltaTime;
 		if (CameraNearPlaneDistance > CameraNearPlaneMaxDistance)
 			CameraNearPlaneDistance = CameraNearPlaneMaxDistance;
 	}
-	// -- NEAR / FAR PLANES --
+
 	// reset camera
-	if (GetAsyncKeyState(VK_BACK)) // reset zoom, near / far planes
+	if (GetAsyncKeyState(KeyResetCameraValues))
 	{
 		CameraZoomLevel = 1.0f;
 		CameraNearPlaneDistance = 0.01f;
 		CameraFarPlaneDistance = 100.0f;
 	}
-	// update projection matrix with current zoom level and near/far planes
-	proj = XMMatrixPerspectiveFovLH(XM_PIDIV4 / CameraZoomLevel, windowWidth / (float)windowHeight, CameraNearPlaneDistance, CameraFarPlaneDistance);
+	// apply zoom level and near/far planes to projection matrix
+	projectionMatrix = XMMatrixPerspectiveFovLH(XM_PIDIV4 / CameraZoomLevel, windowWidth / (float)windowHeight, CameraNearPlaneDistance, CameraFarPlaneDistance);
 	// ----- UPDATE CAMERA -----
 
 	// ----- PER-INSTANCE DATA -----
 	XMMATRIX instanceOffsets[MAX_INSTANCES] = {};
-	XMFLOAT4 InstanceColors[MAX_INSTANCES] = {};
+	XMFLOAT4 instanceColors[MAX_INSTANCES] = {};
 	// ----- PER-INSTANCE DATA -----
 
 	// UPDATES / DRAW SETUP
@@ -1125,14 +1121,14 @@ void Render()
 	XMVECTOR determinant = XMMatrixDeterminant(view);
 	cBufferVS.ViewMatrix = XMMatrixInverse(&determinant, view);
 	cBufferVS.ProjectionMatrix = proj_RTT;
-	cBufferVS.Time = Time;
+	cBufferVS.Time = time;
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 
 	// pixel
 	cBufferPS.AmbientColor = { 1, 1, 1, 1 };
-	cBufferPS.DirectionalLights[0] = DirectionalLights[0];
-	cBufferPS.PointLights[0] = PointLights[0];
-	cBufferPS.Time = Time;
+	cBufferPS.DirectionalLights[0] = directionalLights[0];
+	cBufferPS.PointLights[0] = pointLights[0];
+	cBufferPS.Time = time;
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
 
@@ -1316,11 +1312,11 @@ void Render()
 	distScale = 10.0f;
 	for (unsigned int i = 0; i < DIRECTIONAL_LIGHT_COUNT; ++i)
 	{
-		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
-			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * directionalLights[i].Direction.x,
+			distScale * directionalLights[i].Direction.y, distScale * directionalLights[i].Direction.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.InstanceColors[0] = DirectionalLights[i].Color;
+		cBufferPS.InstanceColors[0] = directionalLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1331,10 +1327,10 @@ void Render()
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	for (unsigned int i = 0; i < POINT_LIGHT_COUNT; ++i)
 	{
-		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(pointLights[i].Position.x, pointLights[i].Position.y, pointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.InstanceColors[0] = PointLights[i].Color;
+		cBufferPS.InstanceColors[0] = pointLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1358,15 +1354,15 @@ void Render()
 		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 		cBufferVS.ViewMatrix = XMMatrixLookAtLH(eye, at, up);
 	}
-	cBufferVS.ProjectionMatrix = proj;
-	cBufferVS.Time = Time;
+	cBufferVS.ProjectionMatrix = projectionMatrix;
+	cBufferVS.Time = time;
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 
 	// pixel
 	cBufferPS.AmbientColor = { 0.5f, 0.5f, 0.5f, 1 };
-	cBufferPS.DirectionalLights[0] = DirectionalLights[0];
-	cBufferPS.PointLights[0] = PointLights[0];
-	cBufferPS.Time = Time;
+	cBufferPS.DirectionalLights[0] = directionalLights[0];
+	cBufferPS.PointLights[0] = pointLights[0];
+	cBufferPS.Time = time;
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
 
@@ -1554,11 +1550,11 @@ void Render()
 	distScale = 10.0f;
 	for (unsigned int i = 0; i < DIRECTIONAL_LIGHT_COUNT; ++i)
 	{
-		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
-			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * directionalLights[i].Direction.x,
+			distScale * directionalLights[i].Direction.y, distScale * directionalLights[i].Direction.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.InstanceColors[0] = DirectionalLights[i].Color;
+		cBufferPS.InstanceColors[0] = directionalLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1569,10 +1565,10 @@ void Render()
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	for (unsigned int i = 0; i < POINT_LIGHT_COUNT; ++i)
 	{
-		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(pointLights[i].Position.x, pointLights[i].Position.y, pointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.InstanceColors[0] = PointLights[i].Color;
+		cBufferPS.InstanceColors[0] = pointLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1592,15 +1588,15 @@ void Render()
 	view1 = XMMatrixInverse(&determinant, view1);
 	determinant = XMMatrixDeterminant(view1);
 	cBufferVS.ViewMatrix = XMMatrixInverse(&determinant, view1);
-	cBufferVS.ProjectionMatrix = proj;
-	cBufferVS.Time = Time;
+	cBufferVS.ProjectionMatrix = projectionMatrix;
+	cBufferVS.Time = time;
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 
 	// pixel
 	cBufferPS.AmbientColor = { 0.5f, 0.5f, 0.5f, 1 };
-	cBufferPS.DirectionalLights[0] = DirectionalLights[0];
-	cBufferPS.PointLights[0] = PointLights[0];
-	cBufferPS.Time = Time;
+	cBufferPS.DirectionalLights[0] = directionalLights[0];
+	cBufferPS.PointLights[0] = pointLights[0];
+	cBufferPS.Time = time;
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
 
@@ -1783,11 +1779,11 @@ void Render()
 	distScale = 10.0f;
 	for (unsigned int i = 0; i < DIRECTIONAL_LIGHT_COUNT; ++i)
 	{
-		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * DirectionalLights[i].Direction.x,
-			distScale * DirectionalLights[i].Direction.y, distScale * DirectionalLights[i].Direction.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(distScale * directionalLights[i].Direction.x,
+			distScale * directionalLights[i].Direction.y, distScale * directionalLights[i].Direction.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.InstanceColors[0] = DirectionalLights[i].Color;
+		cBufferPS.InstanceColors[0] = directionalLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1798,10 +1794,10 @@ void Render()
 	scale = XMMatrixScaling(sizeScale, sizeScale, sizeScale);
 	for (unsigned int i = 0; i < POINT_LIGHT_COUNT; ++i)
 	{
-		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(PointLights[i].Position.x, PointLights[i].Position.y, PointLights[i].Position.z);
+		cBufferVS.WorldMatrix = scale * XMMatrixTranslation(pointLights[i].Position.x, pointLights[i].Position.y, pointLights[i].Position.z);
 		DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 		DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-		cBufferPS.InstanceColors[0] = PointLights[i].Color;
+		cBufferPS.InstanceColors[0] = pointLights[i].Color;
 		DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 		DXDeviceContext->PSSetShader(DXPixelShaderSolidColor, 0, 0);
 		DXDeviceContext->DrawIndexed(CubeIndexCount, 0, 0);
@@ -1820,7 +1816,7 @@ void Render()
 	// ----- STORE MATRICES -----
 	XMStoreFloat4x4(&WorldMatrix, wrld);
 	XMStoreFloat4x4(&ViewMatrix, view);
-	XMStoreFloat4x4(&ProjectionMatrix, proj);
+	XMStoreFloat4x4(&ProjectionMatrix, projectionMatrix);
 	XMStoreFloat4x4(&RenderToTextureProjectionMatrix, proj_RTT);
 	XMStoreFloat4x4(&SkyboxWorldMatrix, wrld_Skybox);
 	XMStoreFloat4x4(&CubeWorldMatrix, wrld_Cube);

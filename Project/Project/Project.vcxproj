@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="ControlMapping.h" />
     <ClInclude Include="OBJDataLoader.h" />
     <ClInclude Include="Project.h" />
     <ClInclude Include="Resource.h" />

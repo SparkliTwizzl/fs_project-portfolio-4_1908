@@ -36,6 +36,9 @@
     <ClInclude Include="OBJDataLoader.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="ControlMapping.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
