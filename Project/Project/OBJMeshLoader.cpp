@@ -63,27 +63,27 @@ CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstruc
 	{
 		for (unsigned int faceVertexIndex = 0; faceVertexIndex < 3; ++faceVertexIndex)
 		{
-			bool isUnique = true;
-			unsigned int index = 0;
+			bool isVertexUnique = true;
+			unsigned int indexOfVertex = 0;
 			for (unsigned int unsortedVertexIndex = 0; unsortedVertexIndex < result.AbstractVertices.size(); ++unsortedVertexIndex)
 			{
 				AbstractVertex faceVertex = unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex];
 				AbstractVertex unsortedVertex = result.AbstractVertices[unsortedVertexIndex];
 				if (faceVertex == unsortedVertex)
 				{
-					isUnique = false;
-					index = unsortedVertexIndex;
+					isVertexUnique = false;
+					indexOfVertex = unsortedVertexIndex;
 					break;
 				}
 			}
 
-			if (isUnique)
+			if (isVertexUnique)
 			{
-				index = result.AbstractVertices.size();
+				indexOfVertex = result.AbstractVertices.size();
 				result.AbstractVertices.push_back(unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex]);
 			}
 
-			result.Indices.push_back(index);
+			result.Indices.push_back(indexOfVertex);
 		}
 	}
 
