@@ -138,70 +138,66 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 		char* nextToken = nullptr;
 		char* token = strtok_s(extractVerticesFrom, separators, &nextToken);
 
-		// check if line contains vertex data
 		vector<char*> tokens;
+		while (token != NULL)
+		{
+			tokens.push_back(token);
+			token = strtok_s(NULL, separators, &nextToken);
+		}
+
 		switch (readLineInto[0])
 		{
 			case OBJVertexIndicator:
 			{
-				// split line into tokens
-				while (token != NULL)
-				{
-					tokens.push_back(token);
-					token = strtok_s(NULL, separators, &nextToken);
-				}
-
 				// convert tokens into vertex data; first token is line identifier and is ignored
-				float3 value;
 				switch (tokens[0][1])
 				{
 					case OBJNormalIndicator:
-						value =
+					{
+						float3 normal =
 						{
 							.x = strtof(tokens[1], nullptr),
 							.y = strtof(tokens[2], nullptr),
 							.z = strtof(tokens[3], nullptr),
 						};
-						result.Normals.push_back(value);
+						result.Normals.push_back(normal);
 						break;
+					}
 
 					case OBJTexelIndicator:
+					{
 						bool doesTexelHaveZValue = tokens.size() > 3;
-						value =
+						float3 texel =
 						{
 							.x = strtof(tokens[1], nullptr),
 							.y = strtof(tokens[2], nullptr),
 							.z = (doesTexelHaveZValue ? strtof(tokens[3], nullptr) : 0.0f),
 						};
-						result.Texels.push_back(value);
+						result.Texels.push_back(texel);
 						break;
+					}
 
 					case OBJPositionIndicator:
 					default:
-						value =
+					{
+						float3 position =
 						{
 							.x = strtof(tokens[1], nullptr),
 							.y = strtof(tokens[2], nullptr),
 							.z = strtof(tokens[3], nullptr),
 						};
-						result.Positions.push_back(value);
+						result.Positions.push_back(position);
 						break;
+					}
 				}
 				break;
 			}
 
 			case OBJFaceIndicator:
 			{
-				// split line into tokens
-				while (token != NULL)
-				{
-					tokens.push_back(token);
-					token = strtok_s(NULL, separators, &nextToken);
-				}
+				// convert tokens into vertices
 				vector<AbstractVertex> tokenVertices;
 				char faceSeparators[] = "/";
-
-				// convert tokens into vertices
 				for (unsigned int i = 1; i < tokens.size(); ++i)
 				{
 					char extractFacesFrom[100];
@@ -224,7 +220,6 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 					tokenVertices.push_back(vertex);
 				}
 
-				// assemble faces from vertex list, dividing quads into triangles if necessary
 				OBJTriangle face =
 				{
 					tokenVertices[0],
