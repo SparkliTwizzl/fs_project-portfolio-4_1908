@@ -1,30 +1,28 @@
-// SHADER INPUT
-struct S_GSINPUT
+struct InputData
 {
-	float4 pos : SV_POSITION;
-	float3 norm : NORMAL;
-	float3 tex : TEXCOORD;
-	float4 color : COLOR;
-	uint instanceID : SV_INSTANCEID;
-	float4 posWrld : WORLDPOSITION;
+	float4 Position : SV_POSITION;
+	float3 Normal : NORMAL;
+	float3 Texel : TEXCOORD;
+	float4 Color : COLOR;
+	uint InstanceId : SV_INSTANCEID;
+	float4 WorldPosition : WORLDPOSITION;
 };
 
-// SHADER OUTPUT
-struct S_GSOUTPUT
+struct OutputData
 {
-	float4 pos : SV_POSITION;
-	float3 norm : NORMAL;
-	float3 tex : TEXCOORD;
-	float4 color : COLOR;
-	uint instanceID : SV_INSTANCEID;
-	float4 posWrld : WORLDPOSITION;
+	float4 Position : SV_POSITION;
+	float3 Normal : NORMAL;
+	float3 Texel : TEXCOORD;
+	float4 Color : COLOR;
+	uint InstanceId : SV_INSTANCEID;
+	float4 WorldPosition : WORLDPOSITION;
 };
 
-// SHADER
+
 [maxvertexcount(6)]
-void main(triangle S_GSINPUT _input[3], inout TriangleStream<S_GSOUTPUT> outputStream)
+void main(triangle InputData input[3], inout TriangleStream<OutputData> outputStream)
 {
-	S_GSOUTPUT output = (S_GSOUTPUT) 0;
+	OutputData output = (OutputData) 0;
 
 	float3 offsets[2] =
 	{
@@ -36,27 +34,27 @@ void main(triangle S_GSINPUT _input[3], inout TriangleStream<S_GSOUTPUT> outputS
 	{
 		if (i < 3)
 		{
-			output.pos = _input[i].pos;
-			output.pos = output.pos + float4(offsets[0], 0);
-			output.norm = _input[i].norm;
-			output.tex = _input[i].tex;
-			output.color = _input[i].color;
-			output.instanceID = _input[i].instanceID;
-			output.posWrld = _input[i].posWrld + float4(offsets[0], 0);
+			output.Position = input[i].Position;
+			output.Position = output.Position + float4(offsets[0], 0);
+			output.Normal = input[i].Normal;
+			output.Texel = input[i].Texel;
+			output.Color = input[i].Color;
+			output.InstanceId = input[i].InstanceId;
+			output.WorldPosition = input[i].WorldPosition + float4(offsets[0], 0);
 		}
 		else
 		{
-			output.pos = _input[i - 3].pos;
-			output.pos = output.pos + float4(offsets[1], 0);
-			output.norm = _input[i - 3].norm;
-			output.tex = _input[i - 3].tex;
-			output.color = _input[i - 3].color;
-			output.instanceID = _input[i - 3].instanceID;
-			output.posWrld = _input[i - 3].posWrld + float4(offsets[1], 0);
+			output.Position = input[i - 3].Position;
+			output.Position = output.Position + float4(offsets[1], 0);
+			output.Normal = input[i - 3].Normal;
+			output.Texel = input[i - 3].Texel;
+			output.Color = input[i - 3].Color;
+			output.InstanceId = input[i - 3].InstanceId;
+			output.WorldPosition = input[i - 3].WorldPosition + float4(offsets[1], 0);
 		}
-		
+
 		outputStream.Append(output);
 	}
-	
+
 	outputStream.RestartStrip();
 }
