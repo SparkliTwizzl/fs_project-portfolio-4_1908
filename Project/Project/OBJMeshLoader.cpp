@@ -1,4 +1,4 @@
-#include "OBJDataLoader.h"
+#include "OBJMeshLoader.h"
 
 #include <iostream>
 #include <fstream>
@@ -131,9 +131,9 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 			break;
 		}
 
-		// copy line into separate string to use strtok on it
 		char extractVerticesFrom[100];
 		strcpy_s(extractVerticesFrom, readLineInto);
+
 		char separators[] = " ";
 		char* nextToken = nullptr;
 		char* token = strtok_s(extractVerticesFrom, separators, &nextToken);
@@ -145,7 +145,8 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 			token = strtok_s(NULL, separators, &nextToken);
 		}
 
-		switch (readLineInto[0])
+		char objLineTypeIndicator = readLineInto[0];
+		switch (objLineTypeIndicator)
 		{
 			case OBJVertexIndicator:
 			{

@@ -3,7 +3,7 @@
 
 #include "ControlMapping.h"
 #include "DDSTextureLoader.h"
-#include "OBJDataLoader.h"
+#include "OBJMeshLoader.h"
 
 #include "VertexShaderDefault.csh"
 #include "VertexShaderDistort.csh"

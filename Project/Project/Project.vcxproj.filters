@@ -33,7 +33,7 @@
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="OBJDataLoader.h">
+    <ClInclude Include="OBJMeshLoader.h">
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="ControlMapping.h">
@@ -53,7 +53,7 @@
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>CPPs</Filter>
     </ClCompile>
-    <ClCompile Include="OBJDataLoader.cpp">
+    <ClCompile Include="OBJMeshLoader.cpp">
       <Filter>CPPs</Filter>
     </ClCompile>
   </ItemGroup>
