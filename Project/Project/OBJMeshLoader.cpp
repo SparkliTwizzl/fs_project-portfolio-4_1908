@@ -20,6 +20,14 @@ struct AbstractVertex
 	unsigned int PositionIndex;
 	unsigned int TexelIndex;
 	unsigned int NormalIndex;
+
+	bool operator==(const AbstractVertex& other)
+	{
+		bool areEqual = PositionIndex == other.PositionIndex
+			&& TexelIndex == other.TexelIndex
+			&& NormalIndex == other.NormalIndex;
+		return areEqual;
+	}
 };
 
 struct OBJTriangle
@@ -51,18 +59,17 @@ struct NormalizedMeshData
 CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstructuredMeshData)
 {
 	CompactifiedMeshData result = {};
-	for (unsigned int faceIndex = 0; faceIndex < unstructuredMeshData.Faces.size(); faceIndex++)
+	for (unsigned int faceIndex = 0; faceIndex < unstructuredMeshData.Faces.size(); ++faceIndex)
 	{
-		for (unsigned int faceVertexIndex = 0; faceVertexIndex < 3; faceVertexIndex++)
+		for (unsigned int faceVertexIndex = 0; faceVertexIndex < 3; ++faceVertexIndex)
 		{
 			bool isUnique = true;
 			unsigned int index = 0;
 			for (unsigned int unsortedVertexIndex = 0; unsortedVertexIndex < result.AbstractVertices.size(); ++unsortedVertexIndex)
 			{
-
-				if (unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].PositionIndex == result.AbstractVertices[unsortedVertexIndex].PositionIndex
-					&& unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].TexelIndex == result.AbstractVertices[unsortedVertexIndex].TexelIndex
-					&& unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].NormalIndex == result.AbstractVertices[unsortedVertexIndex].NormalIndex)
+				AbstractVertex faceVertex = unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex];
+				AbstractVertex unsortedVertex = result.AbstractVertices[unsortedVertexIndex];
+				if (faceVertex == unsortedVertex)
 				{
 					isUnique = false;
 					index = unsortedVertexIndex;
