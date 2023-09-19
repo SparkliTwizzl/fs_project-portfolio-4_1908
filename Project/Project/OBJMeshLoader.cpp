@@ -97,17 +97,14 @@ NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructured
 	result.Vertices = new OBJVertex[compactifiedMeshData.AbstractVertices.size()];
 	for (unsigned int i = 0; i < compactifiedMeshData.AbstractVertices.size(); ++i)
 	{
-		OBJVertex vertex = {};
-		vertex.Position.x = unstructuredMeshData.Positions[compactifiedMeshData.AbstractVertices[i].PositionIndex].x;
-		vertex.Position.y = unstructuredMeshData.Positions[compactifiedMeshData.AbstractVertices[i].PositionIndex].y;
-		vertex.Position.z = unstructuredMeshData.Positions[compactifiedMeshData.AbstractVertices[i].PositionIndex].z;
-		vertex.Texel.x = unstructuredMeshData.Texels[compactifiedMeshData.AbstractVertices[i].TexelIndex].x;
-		vertex.Texel.y = unstructuredMeshData.Texels[compactifiedMeshData.AbstractVertices[i].TexelIndex].y;
-		vertex.Texel.z = unstructuredMeshData.Texels[compactifiedMeshData.AbstractVertices[i].TexelIndex].z;
-		vertex.Normal.x = unstructuredMeshData.Normals[compactifiedMeshData.AbstractVertices[i].NormalIndex].x;
-		vertex.Normal.y = unstructuredMeshData.Normals[compactifiedMeshData.AbstractVertices[i].NormalIndex].y;
-		vertex.Normal.z = unstructuredMeshData.Normals[compactifiedMeshData.AbstractVertices[i].NormalIndex].z;
-		result.Vertices[i] = vertex;
+		AbstractVertex abstractVertex = compactifiedMeshData.AbstractVertices[i];
+		OBJVertex objVertex =
+		{
+			.Position = unstructuredMeshData.Positions[abstractVertex.PositionIndex],
+			.Texel = unstructuredMeshData.Texels[abstractVertex.TexelIndex],
+			.Normal = unstructuredMeshData.Normals[abstractVertex.NormalIndex],
+		};
+		result.Vertices[i] = objVertex;
 	}
 
 	result.Indices = new unsigned int[compactifiedMeshData.Indices.size()];
