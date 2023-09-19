@@ -8,7 +8,14 @@
 using std::vector;
 
 
-struct UnstructuredVertex
+const char OBJFaceIndicator = 'f';
+const char OBJNormalIndicator = 'n';
+const char OBJPositionIndicator = 'p';
+const char OBJTexelIndicator = 't';
+const char OBJVertexIndicator = 'v';
+
+
+struct AbstractVertex
 {
 	unsigned int PositionIndex;
 	unsigned int TexelIndex;
@@ -17,7 +24,7 @@ struct UnstructuredVertex
 
 struct OBJTriangle
 {
-	UnstructuredVertex Vertices[3];
+	AbstractVertex Vertices[3];
 };
 
 struct UnstructuredMeshData
@@ -30,7 +37,7 @@ struct UnstructuredMeshData
 
 struct CompactifiedMeshData
 {
-	vector<UnstructuredVertex> Vertices;
+	vector<AbstractVertex> AbstractVertices;
 	vector<unsigned int> Indices;
 };
 
@@ -50,12 +57,12 @@ CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstruc
 		{
 			bool isUnique = true;
 			unsigned int index = 0;
-			for (unsigned int unsortedVertexIndex = 0; unsortedVertexIndex < result.Vertices.size(); ++unsortedVertexIndex)
+			for (unsigned int unsortedVertexIndex = 0; unsortedVertexIndex < result.AbstractVertices.size(); ++unsortedVertexIndex)
 			{
 
-				if (unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].PositionIndex == result.Vertices[unsortedVertexIndex].PositionIndex
-					&& unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].TexelIndex == result.Vertices[unsortedVertexIndex].TexelIndex
-					&& unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].NormalIndex == result.Vertices[unsortedVertexIndex].NormalIndex)
+				if (unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].PositionIndex == result.AbstractVertices[unsortedVertexIndex].PositionIndex
+					&& unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].TexelIndex == result.AbstractVertices[unsortedVertexIndex].TexelIndex
+					&& unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex].NormalIndex == result.AbstractVertices[unsortedVertexIndex].NormalIndex)
 				{
 					isUnique = false;
 					index = unsortedVertexIndex;
@@ -65,8 +72,8 @@ CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstruc
 
 			if (isUnique)
 			{
-				index = result.Vertices.size();
-				result.Vertices.push_back(unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex]);
+				index = result.AbstractVertices.size();
+				result.AbstractVertices.push_back(unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex]);
 			}
 
 			result.Indices.push_back(index);
@@ -80,19 +87,19 @@ NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructured
 {
 	NormalizedMeshData result = {};
 
-	result.Vertices = new OBJVertex[compactifiedMeshData.Vertices.size()];
-	for (unsigned int i = 0; i < compactifiedMeshData.Vertices.size(); ++i)
+	result.Vertices = new OBJVertex[compactifiedMeshData.AbstractVertices.size()];
+	for (unsigned int i = 0; i < compactifiedMeshData.AbstractVertices.size(); ++i)
 	{
 		OBJVertex vertex = {};
-		vertex.Position.x = unstructuredMeshData.Positions[compactifiedMeshData.Vertices[i].PositionIndex].x;
-		vertex.Position.y = unstructuredMeshData.Positions[compactifiedMeshData.Vertices[i].PositionIndex].y;
-		vertex.Position.z = unstructuredMeshData.Positions[compactifiedMeshData.Vertices[i].PositionIndex].z;
-		vertex.Texel.x = unstructuredMeshData.Texels[compactifiedMeshData.Vertices[i].TexelIndex].x;
-		vertex.Texel.y = unstructuredMeshData.Texels[compactifiedMeshData.Vertices[i].TexelIndex].y;
-		vertex.Texel.z = unstructuredMeshData.Texels[compactifiedMeshData.Vertices[i].TexelIndex].z;
-		vertex.Normal.x = unstructuredMeshData.Normals[compactifiedMeshData.Vertices[i].NormalIndex].x;
-		vertex.Normal.y = unstructuredMeshData.Normals[compactifiedMeshData.Vertices[i].NormalIndex].y;
-		vertex.Normal.z = unstructuredMeshData.Normals[compactifiedMeshData.Vertices[i].NormalIndex].z;
+		vertex.Position.x = unstructuredMeshData.Positions[compactifiedMeshData.AbstractVertices[i].PositionIndex].x;
+		vertex.Position.y = unstructuredMeshData.Positions[compactifiedMeshData.AbstractVertices[i].PositionIndex].y;
+		vertex.Position.z = unstructuredMeshData.Positions[compactifiedMeshData.AbstractVertices[i].PositionIndex].z;
+		vertex.Texel.x = unstructuredMeshData.Texels[compactifiedMeshData.AbstractVertices[i].TexelIndex].x;
+		vertex.Texel.y = unstructuredMeshData.Texels[compactifiedMeshData.AbstractVertices[i].TexelIndex].y;
+		vertex.Texel.z = unstructuredMeshData.Texels[compactifiedMeshData.AbstractVertices[i].TexelIndex].z;
+		vertex.Normal.x = unstructuredMeshData.Normals[compactifiedMeshData.AbstractVertices[i].NormalIndex].x;
+		vertex.Normal.y = unstructuredMeshData.Normals[compactifiedMeshData.AbstractVertices[i].NormalIndex].y;
+		vertex.Normal.z = unstructuredMeshData.Normals[compactifiedMeshData.AbstractVertices[i].NormalIndex].z;
 		result.Vertices[i] = vertex;
 	}
 
@@ -135,53 +142,7 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 		vector<char*> tokens;
 		switch (readLineInto[0])
 		{
-			case 'v': //vertex
-			{
-				// split line into tokens; first token is line identifier and is ignored
-				while (token != NULL)
-				{
-					tokens.push_back(token);
-					token = strtok_s(NULL, separators, &nextToken);
-				}
-
-				// convert tokens into vertex data
-				switch (tokens[0][1])
-				{
-					case 'n':
-						float3 normal;
-						normal.x = strtof(tokens[1], nullptr);
-						normal.y = strtof(tokens[2], nullptr);
-						normal.z = strtof(tokens[3], nullptr);
-						result.Normals.push_back(normal);
-						break;
-
-					case 't':
-						float3 texel;
-						texel.x = strtof(tokens[1], nullptr);
-						texel.y = strtof(tokens[2], nullptr);
-						if (tokens.size() > 3)
-						{
-							texel.z = strtof(tokens[3], nullptr);
-						}
-						else
-						{
-							texel.z = 0.0f;
-						}
-						result.Texels.push_back(texel);
-						break;
-
-					default:
-						float3 position;
-						position.x = strtof(tokens[1], nullptr);
-						position.y = strtof(tokens[2], nullptr);
-						position.z = strtof(tokens[3], nullptr);
-						result.Positions.push_back(position);
-						break;
-				}
-				break;
-			}
-
-			case 'f':
+			case OBJVertexIndicator:
 			{
 				// split line into tokens
 				while (token != NULL)
@@ -189,7 +150,55 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 					tokens.push_back(token);
 					token = strtok_s(NULL, separators, &nextToken);
 				}
-				vector<UnstructuredVertex> tokenVertices;
+
+				// convert tokens into vertex data; first token is line identifier and is ignored
+				float3 value;
+				switch (tokens[0][1])
+				{
+					case OBJNormalIndicator:
+						value =
+						{
+							.x = strtof(tokens[1], nullptr),
+							.y = strtof(tokens[2], nullptr),
+							.z = strtof(tokens[3], nullptr),
+						};
+						result.Normals.push_back(value);
+						break;
+
+					case OBJTexelIndicator:
+						bool doesTexelHaveZValue = tokens.size() > 3;
+						value =
+						{
+							.x = strtof(tokens[1], nullptr),
+							.y = strtof(tokens[2], nullptr),
+							.z = (doesTexelHaveZValue ? strtof(tokens[3], nullptr) : 0.0f),
+						};
+						result.Texels.push_back(value);
+						break;
+
+					case OBJPositionIndicator:
+					default:
+						value =
+						{
+							.x = strtof(tokens[1], nullptr),
+							.y = strtof(tokens[2], nullptr),
+							.z = strtof(tokens[3], nullptr),
+						};
+						result.Positions.push_back(value);
+						break;
+				}
+				break;
+			}
+
+			case OBJFaceIndicator:
+			{
+				// split line into tokens
+				while (token != NULL)
+				{
+					tokens.push_back(token);
+					token = strtok_s(NULL, separators, &nextToken);
+				}
+				vector<AbstractVertex> tokenVertices;
 				char faceSeparators[] = "/";
 
 				// convert tokens into vertices
@@ -208,7 +217,7 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 					}
 
 					// convert values and add to list; raw values are 1-based, need to subtract 1 from each to make them 0-based
-					UnstructuredVertex vertex;
+					AbstractVertex vertex;
 					vertex.PositionIndex = strtoul(faceTokens[0], nullptr, 10) - 1;
 					vertex.TexelIndex = strtoul(faceTokens[1], nullptr, 10) - 1;
 					vertex.NormalIndex = strtoul(faceTokens[2], nullptr, 10) - 1;
@@ -216,16 +225,23 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 				}
 
 				// assemble faces from vertex list, dividing quads into triangles if necessary
-				OBJTriangle face = {};
-				face.Vertices[0] = tokenVertices[0];
-				face.Vertices[1] = tokenVertices[1];
-				face.Vertices[2] = tokenVertices[2];
-				result.Faces.push_back(face);
-				if (tokens.size() > 4)
+				OBJTriangle face =
 				{
-					face.Vertices[0] = tokenVertices[2];
-					face.Vertices[1] = tokenVertices[3];
-					face.Vertices[2] = tokenVertices[0];
+					tokenVertices[0],
+					tokenVertices[1],
+					tokenVertices[2],
+				};
+				result.Faces.push_back(face);
+
+				bool isFaceQuad = tokens.size() > 4;
+				if (isFaceQuad)
+				{
+					face =
+					{
+						tokenVertices[2],
+						tokenVertices[3],
+						tokenVertices[0],
+					};
 					result.Faces.push_back(face);
 				}
 				break;
@@ -249,7 +265,7 @@ OBJMesh OBJMeshLoader::LoadOBJMesh(const char* filePath)
 	OBJMesh result =
 	{
 		normalizedMeshData.Vertices,
-		compactifiedMeshData.Vertices.size(),
+		compactifiedMeshData.AbstractVertices.size(),
 		normalizedMeshData.Indices,
 		compactifiedMeshData.Indices.size(),
 	};
