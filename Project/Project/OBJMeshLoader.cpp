@@ -94,7 +94,7 @@ NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructured
 {
 	NormalizedMeshData result = {};
 
-	result.Vertices = new OBJVertex[compactifiedMeshData.AbstractVertices.size()];
+	vector<OBJVertex> objVertices;
 	for (unsigned int i = 0; i < compactifiedMeshData.AbstractVertices.size(); ++i)
 	{
 		AbstractVertex abstractVertex = compactifiedMeshData.AbstractVertices[i];
@@ -104,14 +104,13 @@ NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructured
 			.Texel = unstructuredMeshData.Texels[abstractVertex.TexelIndex],
 			.Normal = unstructuredMeshData.Normals[abstractVertex.NormalIndex],
 		};
-		result.Vertices[i] = objVertex;
+		objVertices.push_back(objVertex);
 	}
+	result.Vertices = new OBJVertex[compactifiedMeshData.AbstractVertices.size()];
+	std::copy(objVertices.begin(), objVertices.end(), result.Vertices);
 
 	result.Indices = new unsigned int[compactifiedMeshData.Indices.size()];
-	for (unsigned int i = 0; i < compactifiedMeshData.Indices.size(); ++i)
-	{
-		result.Indices[i] = compactifiedMeshData.Indices[i];
-	}
+	std::copy(compactifiedMeshData.Indices.begin(), compactifiedMeshData.Indices.end(), result.Indices);
 
 	return result;
 }
