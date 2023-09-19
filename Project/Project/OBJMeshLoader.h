@@ -5,17 +5,17 @@
 
 struct OBJVertex
 {
+	float3 Normal;
 	float3 Position;
 	float3 Texel;
-	float3 Normal;
 };
 
 struct OBJMesh
 {
-	OBJVertex* Vertices;
-	unsigned int VertexCount;
 	unsigned int* Indices;
 	unsigned int IndexCount;
+	OBJVertex* Vertices;
+	unsigned int VertexCount;
 };
 
 
