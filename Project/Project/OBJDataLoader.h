@@ -18,4 +18,9 @@ struct OBJMesh
 	unsigned int IndexCount;
 };
 
-OBJMesh LoadOBJMesh(const char* filePath);
+
+class OBJMeshLoader
+{
+public:
+	OBJMesh LoadOBJMesh(const char* filePath);
+};

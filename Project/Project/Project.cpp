@@ -720,39 +720,38 @@ void CreateProceduralGrid(Vertex _origin, unsigned int _numDivisions, float _sca
 	*_pp_inds = p_inds;
 }
 
-void ProcessOBJMesh(const char* _filepath, Vertex** _pp_verts, unsigned int& vertexCount, unsigned int** _pp_inds, unsigned int& indexCount)
+void ProcessOBJMesh(const char* filePath, Vertex** vertices, unsigned int& vertexCount, unsigned int** indices, unsigned int& indexCount)
 {
-	OBJMesh RawMeshData = LoadOBJMesh(_filepath);
-	vertexCount = RawMeshData.VertexCount;
-	indexCount = RawMeshData.IndexCount;
-	// copy vertex data
-	Vertex* vertices = new Vertex[vertexCount];
+	OBJMeshLoader objMeshLoader = OBJMeshLoader();
+	OBJMesh objMesh = objMeshLoader.LoadOBJMesh(filePath);
+	vertexCount = objMesh.VertexCount;
+	indexCount = objMesh.IndexCount;
+
+	Vertex* vertexList = new Vertex[vertexCount];
 	for (unsigned int i = 0; i < vertexCount; ++i)
 	{
-		// copy position
-		vertices[i].Position.x = RawMeshData.Vertices[i].Position.x;
-		vertices[i].Position.y = RawMeshData.Vertices[i].Position.y;
-		vertices[i].Position.z = RawMeshData.Vertices[i].Position.z;
-		vertices[i].Position.w = 1;
-		// copy normal
-		vertices[i].Normal.x = RawMeshData.Vertices[i].Normal.x;
-		vertices[i].Normal.y = RawMeshData.Vertices[i].Normal.y;
-		vertices[i].Normal.z = RawMeshData.Vertices[i].Normal.z;
-		// copy texcoord
-		vertices[i].Texel.x = RawMeshData.Vertices[i].Texel.x;
-		vertices[i].Texel.y = RawMeshData.Vertices[i].Texel.y;
-		vertices[i].Texel.z = RawMeshData.Vertices[i].Texel.z;
-		// set color
-		vertices[i].Color = { 1, 1, 1, 1 };
+		Vertex vertex = Vertex();
+		vertex.Position.x = objMesh.Vertices[i].Position.x;
+		vertex.Position.y = objMesh.Vertices[i].Position.y;
+		vertex.Position.z = objMesh.Vertices[i].Position.z;
+		vertex.Position.w = 1;
+		vertex.Normal.x = objMesh.Vertices[i].Normal.x;
+		vertex.Normal.y = objMesh.Vertices[i].Normal.y;
+		vertex.Normal.z = objMesh.Vertices[i].Normal.z;
+		vertex.Texel.x = objMesh.Vertices[i].Texel.x;
+		vertex.Texel.y = objMesh.Vertices[i].Texel.y;
+		vertex.Texel.z = objMesh.Vertices[i].Texel.z;
+		vertex.Color = { 1, 1, 1, 1 };
+		vertexList[i] = vertex;
 	}
-	*_pp_verts = vertices;
-	// copy index data
-	unsigned int* indices = new unsigned int[indexCount];
+	*vertices = vertexList;
+
+	unsigned int* indexList = new unsigned int[indexCount];
 	for (unsigned int i = 0; i < indexCount; ++i)
 	{
-		indices[i] = RawMeshData.Indices[i];
+		indexList[i] = objMesh.Indices[i];
 	}
-	*_pp_inds = indices;
+	*indices = indexList;
 }
 
 HRESULT InitializeDepthStencilView(unsigned int _width, unsigned int _height, ID3D11Texture2D** _pp_depthStencil,
