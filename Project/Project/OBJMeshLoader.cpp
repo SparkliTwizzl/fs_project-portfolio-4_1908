@@ -70,6 +70,7 @@ struct NormalizedMeshData
 
 
 // you'd think that it wouldnt be that hard for someone to make a C++ compiler that doesnt require forward definitions...
+void BuildAndStoreOBJTrianglesFromVertices(UnstructuredMeshData& result, vector<AbstractVertex> tokenVertices, vector<string> tokens);
 CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstructuredMeshData);
 void CompareAndStoreVertexData(CompactifiedMeshData& result, AbstractVertex faceVertex);
 vector<OBJVertex> ConvertAbstractVerticesToOBJVertices(const vector<AbstractVertex>& abstractVertices, UnstructuredMeshData unstructuredMeshData);
@@ -80,6 +81,29 @@ void ProcessOBJVertexNormalCommand(UnstructuredMeshData& result, vector<string> 
 void ProcessOBJVertexTextureCommand(UnstructuredMeshData& result, vector<string> tokens);
 UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath);
 
+
+void BuildAndStoreOBJTrianglesFromVertices(UnstructuredMeshData& result, vector<AbstractVertex> tokenVertices, vector<string> tokens)
+{
+	OBJTriangle face =
+	{
+		tokenVertices[0],
+		tokenVertices[1],
+		tokenVertices[2],
+	};
+	result.Faces.push_back(face);
+
+	bool isFaceQuad = tokens.size() > 4;
+	if (isFaceQuad)
+	{
+		face =
+		{
+			tokenVertices[2],
+			tokenVertices[3],
+			tokenVertices[0],
+		};
+		result.Faces.push_back(face);
+	}
+}
 
 CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstructuredMeshData)
 {
@@ -177,25 +201,7 @@ void ProcessOBJFaceCommand(UnstructuredMeshData& result, vector<string> tokens)
 		tokenVertices.push_back(vertex);
 	}
 
-	OBJTriangle face =
-	{
-		tokenVertices[0],
-		tokenVertices[1],
-		tokenVertices[2],
-	};
-	result.Faces.push_back(face);
-
-	bool isFaceQuad = tokens.size() > 4;
-	if (isFaceQuad)
-	{
-		face =
-		{
-			tokenVertices[2],
-			tokenVertices[3],
-			tokenVertices[0],
-		};
-		result.Faces.push_back(face);
-	}
+	BuildAndStoreOBJTrianglesFromVertices(result, tokenVertices, tokens);
 }
 
 void ProcessOBJVertexCommand(UnstructuredMeshData& result, vector<string> tokens)
