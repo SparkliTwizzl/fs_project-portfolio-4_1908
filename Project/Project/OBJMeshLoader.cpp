@@ -2,8 +2,11 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
+
+#include "StringHash.hpp"
 
 using std::string;
 using std::vector;
@@ -14,6 +17,15 @@ const char OBJNormalIndicator = 'n';
 const char OBJPositionIndicator = 'p';
 const char OBJTexelIndicator = 't';
 const char OBJVertexIndicator = 'v';
+
+const unsigned int OBJCommentCommandHash = hash("#");
+const unsigned int OBJFaceCommandHash = hash("f");
+const unsigned int OBJGroupNameCommandHash = hash("g");
+const unsigned int OBJSmoothingGroupCommandHash = hash("s");
+const unsigned int OBJUseMaterialCommandHash = hash("usemtl");
+const unsigned int OBJVertexCommandHash = hash("v");
+const unsigned int OBJVertexNormalCommandHash = hash("vn");
+const unsigned int OBJVertexTextureCommandHash = hash("vt");
 
 
 struct AbstractVertex
@@ -60,7 +72,7 @@ struct NormalizedMeshData
 // you'd think that it wouldnt be that hard for someone to make a C++ compiler that doesnt require forward definitions...
 CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstructuredMeshData);
 void CompareAndStoreVertexData(CompactifiedMeshData& result, AbstractVertex faceVertex);
-vector<OBJVertex> ConvertAbstractVerticesToObjVertices(const vector<AbstractVertex>& abstractVertices, UnstructuredMeshData unstructuredMeshData);
+vector<OBJVertex> ConvertAbstractVerticesToOBJVertices(const vector<AbstractVertex>& abstractVertices, UnstructuredMeshData unstructuredMeshData);
 NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructuredMeshData, CompactifiedMeshData compactifiedMeshData);
 UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath);
 
@@ -105,9 +117,7 @@ void CompareAndStoreVertexData(CompactifiedMeshData& result, AbstractVertex face
 	result.Indices.push_back(indexOfVertexInResult);
 }
 
-vector<OBJVertex> ConvertAbstractVerticesToObjVertices(
-	const vector<AbstractVertex>& abstractVertices,
-	UnstructuredMeshData unstructuredMeshData)
+vector<OBJVertex> ConvertAbstractVerticesToOBJVertices(const vector<AbstractVertex>& abstractVertices, UnstructuredMeshData unstructuredMeshData)
 {
 	vector<OBJVertex> objVertices;
 	for (unsigned int i = 0; i < abstractVertices.size(); ++i)
@@ -124,23 +134,21 @@ vector<OBJVertex> ConvertAbstractVerticesToObjVertices(
 	return objVertices;
 }
 
-NormalizedMeshData NormalizeStructuredMeshData(
-	UnstructuredMeshData unstructuredMeshData,
-	CompactifiedMeshData compactifiedMeshData)
+NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructuredMeshData, CompactifiedMeshData compactifiedMeshData)
 {
 	NormalizedMeshData result = {};
 
 	result.Indices = new unsigned int[compactifiedMeshData.Indices.size()];
 	std::copy(compactifiedMeshData.Indices.begin(), compactifiedMeshData.Indices.end(), result.Indices);
 
-	vector<OBJVertex> objVertices = ConvertAbstractVerticesToObjVertices(compactifiedMeshData.Vertices, unstructuredMeshData);
+	vector<OBJVertex> objVertices = ConvertAbstractVerticesToOBJVertices(compactifiedMeshData.Vertices, unstructuredMeshData);
 	result.Vertices = new OBJVertex[compactifiedMeshData.Vertices.size()];
 	std::copy(objVertices.begin(), objVertices.end(), result.Vertices);
 
 	return result;
 }
 
-UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
+UnstructuredMeshData ReadUnstructuredMeshDataFromFile_old(string filePath)
 {
 	UnstructuredMeshData result = {};
 
@@ -277,6 +285,117 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
 	}
 
 	inputFileStream.close();
+	return result;
+}
+
+UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
+{
+	UnstructuredMeshData result = {};
+
+	std::ifstream fileIn(filePath);
+	for (string line; getline(fileIn, line); )
+	{
+		std::istringstream lineStringStream(line);
+		vector<string> tokens;
+		for (string token; getline(lineStringStream, token, ' '); )
+		{
+			tokens.push_back(token);
+		}
+
+		string command = tokens.size() > 0 ? tokens[0] : "";
+		switch (hash(command))
+		{
+			case OBJFaceCommandHash:
+			{
+				// convert tokens into vertices
+				vector<AbstractVertex> tokenVertices;
+				for (unsigned int i = 1; i < tokens.size(); ++i)
+				{
+					std::istringstream faceDataStringStream(tokens[i]);
+					vector<string> faceTokens;
+					for (string token; getline(faceDataStringStream, token, '/'); )
+					{
+						faceTokens.push_back(token);
+					}
+
+					// convert values and add to list; raw values are 1-based, need to subtract 1 from each to make them 0-based
+					unsigned int normalTokenIndex = 2;
+					unsigned int positionTokenIndex = 0;
+					unsigned int texelTokenIndex = 1;
+					AbstractVertex vertex =
+					{
+						.NormalIndex = strtoul(faceTokens[normalTokenIndex].c_str(), nullptr, 10) - 1,
+						.PositionIndex = strtoul(faceTokens[positionTokenIndex].c_str(), nullptr, 10) - 1,
+						.TexelIndex = strtoul(faceTokens[texelTokenIndex].c_str(), nullptr, 10) - 1,
+					};
+					tokenVertices.push_back(vertex);
+				}
+
+				OBJTriangle face =
+				{
+					tokenVertices[0],
+					tokenVertices[1],
+					tokenVertices[2],
+				};
+				result.Faces.push_back(face);
+
+				bool isFaceQuad = tokens.size() > 4;
+				if (isFaceQuad)
+				{
+					face =
+					{
+						tokenVertices[2],
+						tokenVertices[3],
+						tokenVertices[0],
+					};
+					result.Faces.push_back(face);
+				}
+				break;
+			}
+
+			case OBJVertexCommandHash:
+			{
+				float3 position =
+				{
+					.x = strtof(tokens[1].c_str(), nullptr),
+					.y = strtof(tokens[2].c_str(), nullptr),
+					.z = strtof(tokens[3].c_str(), nullptr),
+				};
+				result.Positions.push_back(position);
+				break;
+			}
+
+			case OBJVertexNormalCommandHash:
+			{
+				float3 normal =
+				{
+					.x = strtof(tokens[1].c_str(), nullptr),
+					.y = strtof(tokens[2].c_str(), nullptr),
+					.z = strtof(tokens[3].c_str(), nullptr),
+				};
+				result.Normals.push_back(normal);
+				break;
+			}
+
+			case OBJVertexTextureCommandHash:
+			{
+				bool doesTexelHaveZValue = tokens.size() > 3;
+				float3 texel =
+				{
+					.x = strtof(tokens[1].c_str(), nullptr),
+					.y = strtof(tokens[2].c_str(), nullptr),
+					.z = (doesTexelHaveZValue ? strtof(tokens[3].c_str(), nullptr) : 0.0f),
+				};
+				result.Texels.push_back(texel);
+				break;
+			}
+
+			default:
+				break;
+		}
+	}
+
+	fileIn.close();
 	return result;
 }
 
