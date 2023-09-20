@@ -57,51 +57,62 @@ struct NormalizedMeshData
 };
 
 
+// you'd think that it wouldnt be that hard for someone to make a C++ compiler that doesnt require forward definitions...
+CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstructuredMeshData);
+void CompareAndStoreVertexData(CompactifiedMeshData& result, AbstractVertex faceVertex);
+vector<OBJVertex> ConvertAbstractVerticesToObjVertices(const vector<AbstractVertex>& abstractVertices, UnstructuredMeshData unstructuredMeshData);
+NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructuredMeshData, CompactifiedMeshData compactifiedMeshData);
+UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath);
+
+
 CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstructuredMeshData)
 {
 	CompactifiedMeshData result = {};
 	for (unsigned int faceIndex = 0; faceIndex < unstructuredMeshData.Faces.size(); ++faceIndex)
 	{
+		OBJTriangle face = unstructuredMeshData.Faces[faceIndex];
 		for (unsigned int faceVertexIndex = 0; faceVertexIndex < 3; ++faceVertexIndex)
 		{
-			bool isVertexUnique = true;
-			unsigned int indexOfVertex = 0;
-			for (unsigned int unsortedVertexIndex = 0; unsortedVertexIndex < result.Vertices.size(); ++unsortedVertexIndex)
-			{
-				AbstractVertex faceVertex = unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex];
-				AbstractVertex unsortedVertex = result.Vertices[unsortedVertexIndex];
-				if (faceVertex == unsortedVertex)
-				{
-					isVertexUnique = false;
-					indexOfVertex = unsortedVertexIndex;
-					break;
-				}
-			}
-
-			if (isVertexUnique)
-			{
-				indexOfVertex = result.Vertices.size();
-				result.Vertices.push_back(unstructuredMeshData.Faces[faceIndex].Vertices[faceVertexIndex]);
-			}
-
-			result.Indices.push_back(indexOfVertex);
+			AbstractVertex faceVertex = face.Vertices[faceVertexIndex];
+			CompareAndStoreVertexData(result, faceVertex);
 		}
 	}
-
 	return result;
 }
 
-NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructuredMeshData, CompactifiedMeshData compactifiedMeshData)
+void CompareAndStoreVertexData(CompactifiedMeshData& result, AbstractVertex faceVertex)
 {
-	NormalizedMeshData result = {};
+	bool isVertexUnique = true;
+	unsigned int indexOfVertexInResult = 0;
 
-	result.Indices = new unsigned int[compactifiedMeshData.Indices.size()];
-	std::copy(compactifiedMeshData.Indices.begin(), compactifiedMeshData.Indices.end(), result.Indices);
-
-	vector<OBJVertex> objVertices;
-	for (unsigned int i = 0; i < compactifiedMeshData.Vertices.size(); ++i)
+	for (unsigned int unsortedVertexIndex = 0; unsortedVertexIndex < result.Vertices.size(); ++unsortedVertexIndex)
 	{
-		AbstractVertex abstractVertex = compactifiedMeshData.Vertices[i];
+		AbstractVertex unsortedVertex = result.Vertices[unsortedVertexIndex];
+		if (faceVertex == unsortedVertex)
+		{
+			isVertexUnique = false;
+			indexOfVertexInResult = unsortedVertexIndex;
+			break;
+		}
+	}
+
+	if (isVertexUnique)
+	{
+		indexOfVertexInResult = result.Vertices.size();
+		result.Vertices.push_back(faceVertex);
+	}
+
+	result.Indices.push_back(indexOfVertexInResult);
+}
+
+vector<OBJVertex> ConvertAbstractVerticesToObjVertices(
+	const vector<AbstractVertex>& abstractVertices,
+	UnstructuredMeshData unstructuredMeshData)
+{
+	vector<OBJVertex> objVertices;
+	for (unsigned int i = 0; i < abstractVertices.size(); ++i)
+	{
+		AbstractVertex abstractVertex = abstractVertices[i];
 		OBJVertex objVertex =
 		{
 			.Normal = unstructuredMeshData.Normals[abstractVertex.NormalIndex],
@@ -110,6 +121,19 @@ NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructured
 		};
 		objVertices.push_back(objVertex);
 	}
+	return objVertices;
+}
+
+NormalizedMeshData NormalizeStructuredMeshData(
+	UnstructuredMeshData unstructuredMeshData,
+	CompactifiedMeshData compactifiedMeshData)
+{
+	NormalizedMeshData result = {};
+
+	result.Indices = new unsigned int[compactifiedMeshData.Indices.size()];
+	std::copy(compactifiedMeshData.Indices.begin(), compactifiedMeshData.Indices.end(), result.Indices);
+
+	vector<OBJVertex> objVertices = ConvertAbstractVerticesToObjVertices(compactifiedMeshData.Vertices, unstructuredMeshData);
 	result.Vertices = new OBJVertex[compactifiedMeshData.Vertices.size()];
 	std::copy(objVertices.begin(), objVertices.end(), result.Vertices);
 
