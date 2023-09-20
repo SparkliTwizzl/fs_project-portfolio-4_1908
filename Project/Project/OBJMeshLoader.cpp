@@ -12,12 +12,6 @@ using std::string;
 using std::vector;
 
 
-const char OBJFaceIndicator = 'f';
-const char OBJNormalIndicator = 'n';
-const char OBJPositionIndicator = 'p';
-const char OBJTexelIndicator = 't';
-const char OBJVertexIndicator = 'v';
-
 const unsigned int OBJCommentCommandHash = hash("#");
 const unsigned int OBJFaceCommandHash = hash("f");
 const unsigned int OBJGroupNameCommandHash = hash("g");
