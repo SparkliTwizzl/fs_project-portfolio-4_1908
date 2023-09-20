@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "DataTypes.h"
 
 
@@ -22,5 +24,5 @@ struct OBJMesh
 class OBJMeshLoader
 {
 public:
-	OBJMesh LoadOBJMesh(const char* filePath);
+	OBJMesh LoadOBJMesh(std::string filePath);
 };

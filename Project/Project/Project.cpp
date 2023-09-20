@@ -1,6 +1,12 @@
 #include "stdafx.h"
 #include "Project.h"
 
+#include <d3d11.h>
+#include <DirectXMath.h>
+#pragma comment(lib, "d3d11.lib")
+#include <iostream>
+#include <string>
+
 #include "ControlMapping.h"
 #include "DDSTextureLoader.h"
 #include "OBJMeshLoader.h"
@@ -17,12 +23,8 @@
 #include "PixelShaderSolidColor.csh"
 #include "PixelShaderSolidColorLights.csh"
 
-#include <d3d11.h>
-#include <DirectXMath.h>
-#pragma comment(lib, "d3d11.lib")
-#include <iostream>
-
 using namespace DirectX;
+using std::string;
 
 
 #define MAX_LOADSTRING 100
@@ -216,7 +218,7 @@ bool InitializeInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, unsigned int, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, unsigned int, WPARAM, LPARAM);
 void CreateProceduralGrid(Vertex, unsigned int, float, Vertex**, unsigned int&, unsigned int**, unsigned int&);
-void ProcessOBJMesh(const char*, Vertex**, unsigned int&, unsigned int**, unsigned int&);
+void ProcessOBJMesh(string, Vertex**, unsigned int&, unsigned int**, unsigned int&);
 HRESULT InitializeDepthStencilView(unsigned int, unsigned int, ID3D11Texture2D**, ID3D11DepthStencilView**);
 HRESULT InitializeVertexBuffer(unsigned int, Vertex**, ID3D11Buffer**);
 HRESULT InitializeIndexBuffer(unsigned int, unsigned int**, ID3D11Buffer**);
@@ -720,7 +722,7 @@ void CreateProceduralGrid(Vertex _origin, unsigned int _numDivisions, float _sca
 	*_pp_inds = p_inds;
 }
 
-void ProcessOBJMesh(const char* filePath, Vertex** vertices, unsigned int& vertexCount, unsigned int** indices, unsigned int& indexCount)
+void ProcessOBJMesh(string filePath, Vertex** vertices, unsigned int& vertexCount, unsigned int** indices, unsigned int& indexCount)
 {
 	OBJMeshLoader objMeshLoader = OBJMeshLoader();
 	OBJMesh objMesh = objMeshLoader.LoadOBJMesh(filePath);

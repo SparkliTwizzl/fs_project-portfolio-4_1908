@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+using std::string;
 using std::vector;
 
 
@@ -115,7 +116,7 @@ NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructured
 	return result;
 }
 
-UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
+UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
 {
 	UnstructuredMeshData result = {};
 
@@ -256,7 +257,7 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(const char* filePath)
 }
 
 
-OBJMesh OBJMeshLoader::LoadOBJMesh(const char* filePath)
+OBJMesh OBJMeshLoader::LoadOBJMesh(string filePath)
 {
 	UnstructuredMeshData unstructuredMeshData = ReadUnstructuredMeshDataFromFile(filePath);
 	CompactifiedMeshData compactifiedMeshData = CompactifyUnstructuredMeshData(unstructuredMeshData);
