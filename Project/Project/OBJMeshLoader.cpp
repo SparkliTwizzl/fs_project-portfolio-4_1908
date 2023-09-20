@@ -74,6 +74,10 @@ CompactifiedMeshData CompactifyUnstructuredMeshData(UnstructuredMeshData unstruc
 void CompareAndStoreVertexData(CompactifiedMeshData& result, AbstractVertex faceVertex);
 vector<OBJVertex> ConvertAbstractVerticesToOBJVertices(const vector<AbstractVertex>& abstractVertices, UnstructuredMeshData unstructuredMeshData);
 NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructuredMeshData, CompactifiedMeshData compactifiedMeshData);
+void ProcessOBJFaceCommand(UnstructuredMeshData& result, vector<string> tokens);
+void ProcessOBJVertexCommand(UnstructuredMeshData& result, vector<string> tokens);
+void ProcessOBJVertexNormalCommand(UnstructuredMeshData& result, vector<string> tokens);
+void ProcessOBJVertexTextureCommand(UnstructuredMeshData& result, vector<string> tokens);
 UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath);
 
 
@@ -148,144 +152,84 @@ NormalizedMeshData NormalizeStructuredMeshData(UnstructuredMeshData unstructured
 	return result;
 }
 
-UnstructuredMeshData ReadUnstructuredMeshDataFromFile_old(string filePath)
+void ProcessOBJFaceCommand(UnstructuredMeshData& result, vector<string> tokens)
 {
-	UnstructuredMeshData result = {};
-
-	std::ifstream inputFileStream(filePath, std::ios::in);
-	if (!inputFileStream.is_open())
+	vector<AbstractVertex> tokenVertices;
+	for (unsigned int i = 1; i < tokens.size(); ++i)
 	{
-		_RPTN(0, "Could not open OBJ file to load data\n", NULL);
+		std::istringstream faceDataStringStream(tokens[i]);
+		vector<string> faceTokens;
+		for (string token; getline(faceDataStringStream, token, '/'); )
+		{
+			faceTokens.push_back(token);
+		}
+
+		// raw values are 1-based, need to subtract 1 from each to make them 0-based
+		unsigned long normalIndexValue = strtoul(faceTokens[2].c_str(), nullptr, 10) - 1;
+		unsigned long positionIndexValue = strtoul(faceTokens[0].c_str(), nullptr, 10) - 1;
+		unsigned long texelIndexValue = strtoul(faceTokens[1].c_str(), nullptr, 10) - 1;
+		AbstractVertex vertex =
+		{
+			.NormalIndex = normalIndexValue,
+			.PositionIndex = positionIndexValue,
+			.TexelIndex = texelIndexValue,
+		};
+		tokenVertices.push_back(vertex);
 	}
 
-	char readLineInto[100];
-	while (true)
+	OBJTriangle face =
 	{
-		inputFileStream.getline(readLineInto, 100, '\n');
-		if (inputFileStream.eof())
+		tokenVertices[0],
+		tokenVertices[1],
+		tokenVertices[2],
+	};
+	result.Faces.push_back(face);
+
+	bool isFaceQuad = tokens.size() > 4;
+	if (isFaceQuad)
+	{
+		face =
 		{
-			break;
-		}
-
-		char extractVerticesFrom[100];
-		strcpy_s(extractVerticesFrom, readLineInto);
-
-		char separators[] = " ";
-		char* nextToken = nullptr;
-		char* token = strtok_s(extractVerticesFrom, separators, &nextToken);
-
-		vector<char*> tokens;
-		while (token != NULL)
-		{
-			tokens.push_back(token);
-			token = strtok_s(NULL, separators, &nextToken);
-		}
-
-		char objLineTypeIndicator = readLineInto[0];
-		switch (objLineTypeIndicator)
-		{
-			case OBJVertexIndicator:
-			{
-				// convert tokens into vertex data; first token is line identifier and is ignored
-				switch (tokens[0][1])
-				{
-					case OBJNormalIndicator:
-					{
-						float3 normal =
-						{
-							.x = strtof(tokens[1], nullptr),
-							.y = strtof(tokens[2], nullptr),
-							.z = strtof(tokens[3], nullptr),
-						};
-						result.Normals.push_back(normal);
-						break;
-					}
-
-					case OBJPositionIndicator:
-					default:
-					{
-						float3 position =
-						{
-							.x = strtof(tokens[1], nullptr),
-							.y = strtof(tokens[2], nullptr),
-							.z = strtof(tokens[3], nullptr),
-						};
-						result.Positions.push_back(position);
-						break;
-					}
-
-					case OBJTexelIndicator:
-					{
-						bool doesTexelHaveZValue = tokens.size() > 3;
-						float3 texel =
-						{
-							.x = strtof(tokens[1], nullptr),
-							.y = strtof(tokens[2], nullptr),
-							.z = (doesTexelHaveZValue ? strtof(tokens[3], nullptr) : 0.0f),
-						};
-						result.Texels.push_back(texel);
-						break;
-					}
-				}
-				break;
-			}
-
-			case OBJFaceIndicator:
-			{
-				// convert tokens into vertices
-				vector<AbstractVertex> tokenVertices;
-				char faceSeparators[] = "/";
-				for (unsigned int i = 1; i < tokens.size(); ++i)
-				{
-					char extractFacesFrom[100];
-					strcpy_s(extractFacesFrom, tokens[i]);
-
-					// split token into individual values
-					vector<char*> faceTokens;
-					token = strtok_s(extractFacesFrom, faceSeparators, &nextToken);
-					while (token != NULL)
-					{
-						faceTokens.push_back(token);
-						token = strtok_s(NULL, faceSeparators, &nextToken);
-					}
-
-					// convert values and add to list; raw values are 1-based, need to subtract 1 from each to make them 0-based
-					AbstractVertex vertex;
-					vertex.PositionIndex = strtoul(faceTokens[0], nullptr, 10) - 1;
-					vertex.TexelIndex = strtoul(faceTokens[1], nullptr, 10) - 1;
-					vertex.NormalIndex = strtoul(faceTokens[2], nullptr, 10) - 1;
-					tokenVertices.push_back(vertex);
-				}
-
-				OBJTriangle face =
-				{
-					tokenVertices[0],
-					tokenVertices[1],
-					tokenVertices[2],
-				};
-				result.Faces.push_back(face);
-
-				bool isFaceQuad = tokens.size() > 4;
-				if (isFaceQuad)
-				{
-					face =
-					{
-						tokenVertices[2],
-						tokenVertices[3],
-						tokenVertices[0],
-					};
-					result.Faces.push_back(face);
-				}
-				break;
-			}
-
-			default:
-				break;
-		}
+			tokenVertices[2],
+			tokenVertices[3],
+			tokenVertices[0],
+		};
+		result.Faces.push_back(face);
 	}
+}
 
-	inputFileStream.close();
-	return result;
+void ProcessOBJVertexCommand(UnstructuredMeshData& result, vector<string> tokens)
+{
+	float3 position =
+	{
+		.x = strtof(tokens[1].c_str(), nullptr),
+		.y = strtof(tokens[2].c_str(), nullptr),
+		.z = strtof(tokens[3].c_str(), nullptr),
+	};
+	result.Positions.push_back(position);
+}
+
+void ProcessOBJVertexNormalCommand(UnstructuredMeshData& result, vector<string> tokens)
+{
+	float3 normal =
+	{
+		.x = strtof(tokens[1].c_str(), nullptr),
+		.y = strtof(tokens[2].c_str(), nullptr),
+		.z = strtof(tokens[3].c_str(), nullptr),
+	};
+	result.Normals.push_back(normal);
+}
+
+void ProcessOBJVertexTextureCommand(UnstructuredMeshData& result, vector<string> tokens)
+{
+	bool doesTexelHaveZValue = tokens.size() > 3;
+	float3 texel =
+	{
+		.x = strtof(tokens[1].c_str(), nullptr),
+		.y = strtof(tokens[2].c_str(), nullptr),
+		.z = (doesTexelHaveZValue ? strtof(tokens[3].c_str(), nullptr) : 0.0f),
+	};
+	result.Texels.push_back(texel);
 }
 
 UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
@@ -306,89 +250,20 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
 		switch (hash(command))
 		{
 			case OBJFaceCommandHash:
-			{
-				// convert tokens into vertices
-				vector<AbstractVertex> tokenVertices;
-				for (unsigned int i = 1; i < tokens.size(); ++i)
-				{
-					std::istringstream faceDataStringStream(tokens[i]);
-					vector<string> faceTokens;
-					for (string token; getline(faceDataStringStream, token, '/'); )
-					{
-						faceTokens.push_back(token);
-					}
-
-					// convert values and add to list; raw values are 1-based, need to subtract 1 from each to make them 0-based
-					unsigned int normalTokenIndex = 2;
-					unsigned int positionTokenIndex = 0;
-					unsigned int texelTokenIndex = 1;
-					AbstractVertex vertex =
-					{
-						.NormalIndex = strtoul(faceTokens[normalTokenIndex].c_str(), nullptr, 10) - 1,
-						.PositionIndex = strtoul(faceTokens[positionTokenIndex].c_str(), nullptr, 10) - 1,
-						.TexelIndex = strtoul(faceTokens[texelTokenIndex].c_str(), nullptr, 10) - 1,
-					};
-					tokenVertices.push_back(vertex);
-				}
-
-				OBJTriangle face =
-				{
-					tokenVertices[0],
-					tokenVertices[1],
-					tokenVertices[2],
-				};
-				result.Faces.push_back(face);
-
-				bool isFaceQuad = tokens.size() > 4;
-				if (isFaceQuad)
-				{
-					face =
-					{
-						tokenVertices[2],
-						tokenVertices[3],
-						tokenVertices[0],
-					};
-					result.Faces.push_back(face);
-				}
+				ProcessOBJFaceCommand(result, tokens);
 				break;
-			}
 
 			case OBJVertexCommandHash:
-			{
-				float3 position =
-				{
-					.x = strtof(tokens[1].c_str(), nullptr),
-					.y = strtof(tokens[2].c_str(), nullptr),
-					.z = strtof(tokens[3].c_str(), nullptr),
-				};
-				result.Positions.push_back(position);
+				ProcessOBJVertexCommand(result, tokens);
 				break;
-			}
 
 			case OBJVertexNormalCommandHash:
-			{
-				float3 normal =
-				{
-					.x = strtof(tokens[1].c_str(), nullptr),
-					.y = strtof(tokens[2].c_str(), nullptr),
-					.z = strtof(tokens[3].c_str(), nullptr),
-				};
-				result.Normals.push_back(normal);
+				ProcessOBJVertexNormalCommand(result, tokens);
 				break;
-			}
 
 			case OBJVertexTextureCommandHash:
-			{
-				bool doesTexelHaveZValue = tokens.size() > 3;
-				float3 texel =
-				{
-					.x = strtof(tokens[1].c_str(), nullptr),
-					.y = strtof(tokens[2].c_str(), nullptr),
-					.z = (doesTexelHaveZValue ? strtof(tokens[3].c_str(), nullptr) : 0.0f),
-				};
-				result.Texels.push_back(texel);
+				ProcessOBJVertexTextureCommand(result, tokens);
 				break;
-			}
 
 			default:
 				break;
