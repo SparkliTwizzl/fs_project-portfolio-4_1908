@@ -276,7 +276,6 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
 		}
 	}
 
-	fileIn.close();
 	return result;
 }
 
