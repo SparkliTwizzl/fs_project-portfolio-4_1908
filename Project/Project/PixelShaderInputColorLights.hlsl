@@ -1,7 +1,7 @@
 #include "PixelShaderCore.hlsllib"
 
 
-float4 main(ShaderInput input) : SV_TARGET
+float4 main(ShaderVertex input) : SV_TARGET
 {
 	input.Normal = normalize(input.Normal);
 	float4 diffuseColor = input.Color;

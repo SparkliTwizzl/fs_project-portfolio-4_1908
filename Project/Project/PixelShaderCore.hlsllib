@@ -1,3 +1,6 @@
+#include "ShaderCore.hlsllib"
+
+
 #define MAX_INSTANCES 5
 #define MAX_DIRECTIONAL_LIGHTS 3
 #define MAX_POINT_LIGHTS 3
@@ -29,23 +32,7 @@ struct SpotLight
 };
 
 
-struct ShaderInput
-{
-	float4 Position : SV_POSITION;
-	float3 Normal : NORMAL;
-	float3 Texel : TEXCOORD;
-	float4 Color : COLOR;
-	uint InstanceId : SV_INSTANCEID;
-	float4 WorldPosition : WORLDPOSITION;
-};
-
-
-Texture2D DiffuxeTexture2D : register(t0);
-TextureCube DiffuseTextureCube : register(t1);
-SamplerState LinearSampler : register(s0);
-
-
-cbuffer ConstantBuffer : register(b1)
+cbuffer PixelConstantBuffer : register(b1)
 {
 	float4 AmbientColor;
 	float4 InstanceColors[MAX_INSTANCES];
@@ -55,3 +42,8 @@ cbuffer ConstantBuffer : register(b1)
 	float Time;
 	float3 Padding;
 }
+
+
+Texture2D DiffuxeTexture2D : register(t0);
+TextureCube DiffuseTextureCube : register(t1);
+SamplerState LinearSampler : register(s0);

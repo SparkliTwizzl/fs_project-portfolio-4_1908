@@ -1,9 +1,9 @@
 #include "VertexShaderCore.hlsllib"
 
 
-ShaderOutput main(ShaderInput input)
+ShaderVertex main(RawVertex input)
 {
-	ShaderOutput output = (ShaderOutput) 0;
+	ShaderVertex output = (ShaderVertex) 0;
 	output.Position = input.Position;
 	output.Position.x = sin(input.Position.x * Time);
 	output.Position.y = sin(input.Position.y * Time);

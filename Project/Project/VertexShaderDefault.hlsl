@@ -1,9 +1,9 @@
 #include "VertexShaderCore.hlsllib"
 
 
-ShaderOutput main(ShaderInput input)
+ShaderVertex main(RawVertex input)
 {
-	ShaderOutput output = (ShaderOutput) 0;
+	ShaderVertex output = (ShaderVertex) 0;
 	output.Position = mul(input.Position, InstanceOffsets[input.InstanceId]);
 	output.Position = mul(output.Position, WorldMatrix);
 	output.WorldPosition = output.Position;

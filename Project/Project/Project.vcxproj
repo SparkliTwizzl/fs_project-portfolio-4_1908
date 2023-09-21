@@ -390,6 +390,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ShaderCore.hlsllib" />
     <None Include="VertexShaderCore.hlsllib">
       <FileType>Document</FileType>
     </None>

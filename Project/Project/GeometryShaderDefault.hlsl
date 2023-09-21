@@ -2,9 +2,9 @@
 
 
 [maxvertexcount(3)]
-void main(triangle ShaderInput input[3], inout TriangleStream<ShaderOutput> outputStream)
+void main(triangle ShaderVertex input[3], inout TriangleStream<ShaderVertex> outputStream)
 {
-	ShaderOutput output = (ShaderOutput) 0;
+	ShaderVertex output = (ShaderVertex) 0;
 
 	float3 vertexOffsets[3] =
 	{

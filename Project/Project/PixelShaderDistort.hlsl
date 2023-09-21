@@ -1,7 +1,7 @@
 #include "PixelShaderCore.hlsllib"
 
 
-float4 main(ShaderInput input) : SV_TARGET
+float4 main(ShaderVertex input) : SV_TARGET
 {
 	float2 texel = input.Texel.xy;
 	texel.x *= sin(texel.y * Time);
