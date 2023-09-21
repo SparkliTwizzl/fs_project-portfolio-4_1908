@@ -1,4 +1,4 @@
-struct InputData
+struct ShaderInput
 {
 	float4 Position : SV_POSITION;
 	float3 Normal : NORMAL;
@@ -8,7 +8,7 @@ struct InputData
 	float4 WorldPosition : WORLDPOSITION;
 };
 
-struct OutputData
+struct ShaderOutput
 {
 	float4 Position : SV_POSITION;
 	float3 Normal : NORMAL;
@@ -20,9 +20,9 @@ struct OutputData
 
 
 [maxvertexcount(3)]
-void main(triangle InputData input[3], inout TriangleStream<OutputData> outputStream)
+void main(triangle ShaderInput input[3], inout TriangleStream<ShaderOutput> outputStream)
 {
-	OutputData output = (OutputData) 0;
+	ShaderOutput output = (ShaderOutput) 0;
 
 	float3 vertexOffsets[3] =
 	{

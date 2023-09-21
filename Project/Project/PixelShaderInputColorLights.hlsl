@@ -29,7 +29,7 @@ struct SpotLight
 };
 
 
-struct InputData
+struct ShaderInput
 {
 	float4 Position : SV_POSITION;
 	float3 Normal : NORMAL;
@@ -52,7 +52,7 @@ cbuffer ConstantBuffer : register(b1)
 }
 
 
-float4 main(InputData input) : SV_TARGET
+float4 main(ShaderInput input) : SV_TARGET
 {
 	input.Normal = normalize(input.Normal);
 	float4 diffuseColor = input.Color;

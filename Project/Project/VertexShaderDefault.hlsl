@@ -1,7 +1,7 @@
 #pragma pack_matrix(row_major)
 
 
-struct InputData
+struct ShaderInput
 {
 	float4 Position : POSITION;
 	float3 Normal : NORMAL;
@@ -10,7 +10,7 @@ struct InputData
 	uint InstanceId : SV_INSTANCEID;
 };
 
-struct OutputData
+struct ShaderOutput
 {
 	float4 Position : SV_POSITION;
 	float3 Normal : NORMAL;
@@ -31,9 +31,9 @@ cbuffer ConstantBuffer : register(b0)
 }
 
 
-OutputData main(InputData input)
+ShaderOutput main(ShaderInput input)
 {
-	OutputData output = (OutputData) 0;
+	ShaderOutput output = (ShaderOutput) 0;
 	output.Position = mul(input.Position, InstanceOffsets[input.InstanceId]);
 	output.Position = mul(output.Position, WorldMatrix);
 	output.WorldPosition = output.Position;
