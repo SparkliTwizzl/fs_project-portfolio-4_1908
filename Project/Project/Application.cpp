@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include "Project.h"
+#include "Application.h"
 
 #include <d3d11.h>
 #include <DirectXMath.h>
