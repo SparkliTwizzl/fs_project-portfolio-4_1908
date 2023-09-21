@@ -16,23 +16,22 @@ void main(triangle ShaderVertex input[3], inout TriangleStream<ShaderVertex> out
 	{
 		if (i < 3)
 		{
-			output.Position = input[i].Position;
-			output.Position = output.Position + float4(offsets[0], 0);
-			output.Normal = input[i].Normal;
-			output.Texel = input[i].Texel;
 			output.Color = input[i].Color;
 			output.InstanceId = input[i].InstanceId;
+			output.Normal = input[i].Normal;
+			output.Position = input[i].Position + float4(offsets[0], 0);
+			output.Texel = input[i].Texel;
 			output.WorldPosition = input[i].WorldPosition + float4(offsets[0], 0);
 		}
 		else
 		{
-			output.Position = input[i - 3].Position;
-			output.Position = output.Position + float4(offsets[1], 0);
-			output.Normal = input[i - 3].Normal;
-			output.Texel = input[i - 3].Texel;
-			output.Color = input[i - 3].Color;
-			output.InstanceId = input[i - 3].InstanceId;
-			output.WorldPosition = input[i - 3].WorldPosition + float4(offsets[1], 0);
+			uint index = i - 3;
+			output.Color = input[index].Color;
+			output.InstanceId = input[index].InstanceId;
+			output.Normal = input[index].Normal;
+			output.Position = input[index].Position + float4(offsets[1], 0);
+			output.Texel = input[index].Texel;
+			output.WorldPosition = input[index].WorldPosition + float4(offsets[1], 0);
 		}
 
 		outputStream.Append(output);
