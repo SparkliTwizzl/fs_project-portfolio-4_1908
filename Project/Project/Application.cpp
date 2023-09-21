@@ -10,17 +10,17 @@
 #include "DDSTextureLoader.h"
 #include "OBJMeshLoader.h"
 
-#include "VertexShaderDefault.csh"
-#include "VertexShaderDistort.csh"
-#include "GeometryShaderDefault.csh"
-#include "GeometryShaderDistort.csh"
-#include "PixelShaderDefault.csh"
-#include "PixelShaderCubeMap.csh"
-#include "PixelShaderDistort.csh"
-#include "PixelShaderInputColor.csh"
-#include "PixelShaderInputColorLights.csh"
-#include "PixelShaderSolidColor.csh"
-#include "PixelShaderSolidColorLights.csh"
+#include "Shaders/VertexShaderDefault.csh"
+#include "Shaders/VertexShaderDistort.csh"
+#include "Shaders/GeometryShaderDefault.csh"
+#include "Shaders/GeometryShaderDistort.csh"
+#include "Shaders/PixelShaderDefault.csh"
+#include "Shaders/PixelShaderCubeMap.csh"
+#include "Shaders/PixelShaderDistort.csh"
+#include "Shaders/PixelShaderInputColor.csh"
+#include "Shaders/PixelShaderInputColorLights.csh"
+#include "Shaders/PixelShaderSolidColor.csh"
+#include "Shaders/PixelShaderSolidColorLights.csh"
 
 using namespace DirectX;
 using std::string;

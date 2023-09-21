@@ -1,41 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Application">
+      <UniqueIdentifier>{4bb4ccc8-eeea-4981-a7a8-84ed11eef3e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definitions">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Project Items">
       <UniqueIdentifier>{c2daf825-c2f0-43b9-af41-3a364a3f1c47}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{46ec79cb-2fff-4870-851f-7ff3cb2edc28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Application">
-      <UniqueIdentifier>{4bb4ccc8-eeea-4981-a7a8-84ed11eef3e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{3eb44f4c-da11-4289-b8c4-45ab1cd4ffa8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Definitions">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h">
+      <Filter>Application</Filter>
+    </ClInclude>
     <ClInclude Include="ControlMapping.h">
       <Filter>Definitions</Filter>
     </ClInclude>
     <ClInclude Include="DataTypes.h">
       <Filter>Definitions</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Project Items</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Project Items</Filter>
-    </ClInclude>
-    <ClInclude Include="Project.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Project Items</Filter>
     </ClInclude>
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Utilities</Filter>
@@ -43,18 +33,27 @@
     <ClInclude Include="OBJMeshLoader.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Project Items</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Project Items</Filter>
+    </ClInclude>
     <ClInclude Include="StringHash.hpp">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Project Items</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Project.cpp">
+    <ClCompile Include="Application.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="OBJMeshLoader.cpp">
+    <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="DDSTextureLoader.cpp">
+    <ClCompile Include="OBJMeshLoader.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
@@ -67,56 +66,56 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShaderDefault.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VertexShaderDefault.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShaderCubeMap.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShaderInputColor.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShaderSolidColor.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShaderDistort.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShaderSolidColorLights.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="PixelShaderInputColorLights.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="VertexShaderDistort.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="GeometryShaderDefault.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="GeometryShaderDistort.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="Project.rc">
       <Filter>Project Items</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GeometryShaderCore.hlsl">
+    <FxCompile Include="Shaders/GeometryShaderDefault.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/GeometryShaderDistort.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderCubeMap.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderDefault.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderDistort.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderInputColor.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderInputColorLights.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderSolidColor.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderSolidColorLights.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/VertexShaderDefault.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/VertexShaderDistort.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders/GeometryShaderCore.hlsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="PixelShaderCore.hlsl">
+    <None Include="Shaders/PixelShaderCore.hlsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ShaderCore.hlsl">
+    <None Include="Shaders/ShaderCore.hlsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="VertexShaderCore.hlsl">
+    <None Include="Shaders/VertexShaderCore.hlsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
