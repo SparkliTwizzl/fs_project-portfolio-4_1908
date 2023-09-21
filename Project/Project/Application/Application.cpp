@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#include "../ControlMapping.h"
+#include "../Definitions/ControlMapping.h"
 #include "../DDSTextureLoader.h"
 #include "../OBJMeshLoader.h"
 

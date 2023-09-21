@@ -21,11 +21,17 @@
     <ClInclude Include="Application/Application.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="ControlMapping.h">
+    <ClInclude Include="Definitions/ControlMapping.h">
       <Filter>Definitions</Filter>
     </ClInclude>
-    <ClInclude Include="DataTypes.h">
+    <ClInclude Include="Definitions/DataTypes.h">
       <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJMeshLoader.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Project Items/Resource.h">
       <Filter>Project Items</Filter>
@@ -35,12 +41,6 @@
     </ClInclude>
     <ClInclude Include="Project Items/targetver.h">
       <Filter>Project Items</Filter>
-    </ClInclude>
-    <ClInclude Include="DDSTextureLoader.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJMeshLoader.h">
-      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="StringHash.hpp">
       <Filter>Utilities</Filter>
