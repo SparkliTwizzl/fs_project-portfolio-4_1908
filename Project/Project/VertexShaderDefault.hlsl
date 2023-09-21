@@ -1,34 +1,4 @@
-#pragma pack_matrix(row_major)
-
-
-struct ShaderInput
-{
-	float4 Position : POSITION;
-	float3 Normal : NORMAL;
-	float3 Texel : TEXCOORD;
-	float4 Color : COLOR;
-	uint InstanceId : SV_INSTANCEID;
-};
-
-struct ShaderOutput
-{
-	float4 Position : SV_POSITION;
-	float3 Normal : NORMAL;
-	float3 Texel : TEXCOORD;
-	float4 Color : COLOR;
-	uint InstanceId : SV_INSTANCEID;
-	float4 WorldPosition : WORLDPOSITION;
-};
-
-cbuffer ConstantBuffer : register(b0)
-{
-	matrix WorldMatrix;
-	matrix ViewMatrix;
-	matrix ProjectionMatrix;
-	matrix InstanceOffsets[5];
-	float Time;
-	float3 Padding;
-}
+#include "VertexShaderCore.hlsllib"
 
 
 ShaderOutput main(ShaderInput input)
