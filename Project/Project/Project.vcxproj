@@ -148,15 +148,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="ControlMapping.h" />
     <ClInclude Include="DataTypes.h" />
     <ClInclude Include="DDSTextureLoader.h" />
-    <ClInclude Include="ControlMapping.h" />
     <ClInclude Include="OBJMeshLoader.h" />
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Project Items/Resource.h" />
+    <ClInclude Include="Project Items/stdafx.h" />
     <ClInclude Include="StringHash.hpp" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Project Items/targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DDSTextureLoader.cpp">
@@ -183,11 +183,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Project.rc" />
+    <ResourceCompile Include="Project Items/Project.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Project.ico" />
-    <Image Include="small.ico" />
+    <Image Include="Project Items/Project.ico" />
+    <Image Include="Project Items/small.ico" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders/GeometryShaderDefault.hlsl">

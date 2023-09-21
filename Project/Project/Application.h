@@ -1,4 +1,4 @@
 #pragma once
 
-#include "resource.h"
-#include "stdafx.h"
+#include "Project Items/Resource.h"
+#include "Project Items/stdafx.h"
