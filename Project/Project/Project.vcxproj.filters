@@ -18,19 +18,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h">
+    <ClInclude Include="Application/Application.h">
       <Filter>Application</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ControlMapping.h">
       <Filter>Definitions</Filter>
     </ClInclude>
     <ClInclude Include="DataTypes.h">
       <Filter>Definitions</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Project Items/Resource.h">
       <Filter>Project Items</Filter>
     </ClInclude>
@@ -40,8 +36,6 @@
     <ClInclude Include="Project Items/targetver.h">
       <Filter>Project Items</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -53,11 +47,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp">
+    <ClCompile Include="Application/Application.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
