@@ -7,8 +7,8 @@
 #include <string>
 
 #include "../Definitions/ControlMapping.h"
-#include "../DDSTextureLoader.h"
-#include "../OBJMeshLoader.h"
+#include "../Utilities/DDSTextureLoader.h"
+#include "../Utilities/OBJMeshLoader.h"
 
 #include "../Shaders/VertexShaderDefault.csh"
 #include "../Shaders/VertexShaderDistort.csh"

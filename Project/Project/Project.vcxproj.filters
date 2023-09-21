@@ -27,12 +27,6 @@
     <ClInclude Include="Definitions/DataTypes.h">
       <Filter>Definitions</Filter>
     </ClInclude>
-    <ClInclude Include="DDSTextureLoader.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJMeshLoader.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="Project Items/Resource.h">
       <Filter>Project Items</Filter>
     </ClInclude>
@@ -42,7 +36,13 @@
     <ClInclude Include="Project Items/targetver.h">
       <Filter>Project Items</Filter>
     </ClInclude>
-    <ClInclude Include="StringHash.hpp">
+    <ClInclude Include="Utilities/DDSTextureLoader.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities/OBJMeshLoader.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities/StringHash.hpp">
       <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,10 +50,10 @@
     <ClCompile Include="Application/Application.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="DDSTextureLoader.cpp">
+    <ClCompile Include="Utilities/DDSTextureLoader.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="OBJMeshLoader.cpp">
+    <ClCompile Include="Utilities/OBJMeshLoader.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
