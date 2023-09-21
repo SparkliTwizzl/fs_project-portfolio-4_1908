@@ -1,4 +1,4 @@
-#include "VertexShaderCore.hlsllib"
+#include "VertexShaderCore.hlsl"
 
 
 ShaderVertex main(RawVertex input)

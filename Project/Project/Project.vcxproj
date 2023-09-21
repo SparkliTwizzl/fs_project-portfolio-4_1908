@@ -390,18 +390,18 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShaderCore.hlsllib" />
-    <None Include="VertexShaderCore.hlsllib">
+    <None Include="ShaderCore.hlsl" />
+    <None Include="VertexShaderCore.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PixelShaderCore.hlsllib">
+    <None Include="PixelShaderCore.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GeometryShaderCore.hlsllib">
+    <None Include="GeometryShaderCore.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

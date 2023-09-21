@@ -1,4 +1,4 @@
-#include "ShaderCore.hlsllib"
+#include "ShaderCore.hlsl"
 
 
 #define MAX_INSTANCES 5

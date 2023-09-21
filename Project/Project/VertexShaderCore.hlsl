@@ -1,4 +1,4 @@
-#include "ShaderCore.hlsllib"
+#include "ShaderCore.hlsl"
 
 
 cbuffer VertexConstantBuffer : register(b0)

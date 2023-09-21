@@ -1,4 +1,4 @@
-#include "PixelShaderCore.hlsllib"
+#include "PixelShaderCore.hlsl"
 
 
 float4 main(ShaderVertex input) : SV_TARGET

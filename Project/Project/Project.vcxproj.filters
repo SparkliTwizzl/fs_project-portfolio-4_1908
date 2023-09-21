@@ -106,4 +106,18 @@
       <Filter>Project Items</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="GeometryShaderCore.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="PixelShaderCore.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ShaderCore.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="VertexShaderCore.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>

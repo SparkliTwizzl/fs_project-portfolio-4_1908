@@ -1,4 +1,4 @@
-#include "GeometryShaderCore.hlsllib"
+#include "GeometryShaderCore.hlsl"
 
 
 [maxvertexcount(6)]
