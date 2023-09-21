@@ -243,7 +243,10 @@ UnstructuredMeshData ReadUnstructuredMeshDataFromFile(string filePath)
 		vector<string> tokens;
 		for (string token; getline(lineStringStream, token, ' '); )
 		{
-			tokens.push_back(token);
+			if (token != "")
+			{
+				tokens.push_back(token);
+			}
 		}
 
 		string command = tokens.size() > 0 ? tokens[0] : "";
