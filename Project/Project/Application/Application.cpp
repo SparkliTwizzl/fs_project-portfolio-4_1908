@@ -152,7 +152,7 @@ ID3D11ShaderResourceView* RenderToTextureDXShaderResourceView = nullptr;
 
 ID3D11SamplerState* DXLinearSampler = nullptr;
 
-ID3D11GeometryShader* DXGeometryShaderDefault = nullptr;
+ID3D11GeometryShader* DXGeometryShaderInert = nullptr;
 ID3D11GeometryShader* DXGeometryShaderDistort = nullptr;
 ID3D11PixelShader* DXPixelShaderDefault = nullptr;
 ID3D11PixelShader* DXPixelShaderCubeMap = nullptr;
@@ -162,7 +162,7 @@ ID3D11PixelShader* DXPixelShaderInputColorLights = nullptr;
 ID3D11PixelShader* DXPixelShaderSolidColor = nullptr;
 ID3D11PixelShader* DXPixelShaderSolidColorLights = nullptr;
 ID3D11VertexShader* DXVertexShaderDefault = nullptr;
-ID3D11VertexShader* DXVertexShaderDistort = nullptr;
+ID3D11VertexShader* DXVertexShaderScale = nullptr;
 
 XMFLOAT4X4 WorldMatrix;
 XMFLOAT4X4 ViewMatrix;
@@ -425,7 +425,7 @@ bool InitializeInstance(HINSTANCE hInstance, int nCmdShow)
 
 	// ---------- SHADERS ----------
 	hresult = DXDevice->CreateGeometryShader(GeometryShaderDistort, sizeof(GeometryShaderDistort), nullptr, &DXGeometryShaderDistort);
-	hresult = DXDevice->CreateGeometryShader(GeometryShaderInert, sizeof(GeometryShaderInert), nullptr, &DXGeometryShaderDefault);
+	hresult = DXDevice->CreateGeometryShader(GeometryShaderInert, sizeof(GeometryShaderInert), nullptr, &DXGeometryShaderInert);
 
 	hresult = DXDevice->CreatePixelShader(PixelShaderDefault, sizeof(PixelShaderDefault), nullptr, &DXPixelShaderDefault);
 	hresult = DXDevice->CreatePixelShader(PixelShaderCubeMap, sizeof(PixelShaderCubeMap), nullptr, &DXPixelShaderCubeMap);
@@ -436,7 +436,7 @@ bool InitializeInstance(HINSTANCE hInstance, int nCmdShow)
 	hresult = DXDevice->CreatePixelShader(PixelShaderSolidColorLights, sizeof(PixelShaderSolidColorLights), nullptr, &DXPixelShaderSolidColorLights);
 
 	hresult = DXDevice->CreateVertexShader(VertexShaderDefault, sizeof(VertexShaderDefault), nullptr, &DXVertexShaderDefault);
-	hresult = DXDevice->CreateVertexShader(VertexShaderDistort, sizeof(VertexShaderDistort), nullptr, &DXVertexShaderDistort);
+	hresult = DXDevice->CreateVertexShader(VertexShaderScale, sizeof(VertexShaderScale), nullptr, &DXVertexShaderScale);
 	// ---------- SHADERS ----------
 
 	// ---------- INPUT LAYOUT ----------
@@ -1170,7 +1170,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderInputColorLights, 0, 0);
@@ -1184,7 +1184,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1199,7 +1199,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1214,7 +1214,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1229,7 +1229,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1244,7 +1244,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1259,7 +1259,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1274,7 +1274,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1405,7 +1405,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderInputColorLights, 0, 0);
@@ -1419,8 +1419,8 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	if (ShouldUsedDefaultVertexShader) DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);	// default shader
-	else DXDeviceContext->VSSetShader(DXVertexShaderDistort, 0, 0);		// fancy shader
-	if (ShouldUseDefaultGeometryShader) DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);	// default shader
+	else DXDeviceContext->VSSetShader(DXVertexShaderScale, 0, 0);		// fancy shader
+	if (ShouldUseDefaultGeometryShader) DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);	// default shader
 	else DXDeviceContext->GSSetShader(DXGeometryShaderDistort, 0, 0);		// fancy shader
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
@@ -1437,7 +1437,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1452,7 +1452,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1467,7 +1467,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1482,7 +1482,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1497,7 +1497,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1512,7 +1512,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1637,7 +1637,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderInputColorLights, 0, 0);
@@ -1651,7 +1651,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1666,7 +1666,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1681,7 +1681,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1696,7 +1696,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1711,7 +1711,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1726,7 +1726,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1741,7 +1741,7 @@ void Render()
 	cBufferVS.InstanceOffsets[0] = XMMatrixIdentity();
 	DXDeviceContext->UpdateSubresource(DXVertexShaderConstantBuffer, 0, nullptr, &cBufferVS, 0, 0);
 	DXDeviceContext->VSSetShader(DXVertexShaderDefault, 0, 0);
-	DXDeviceContext->GSSetShader(DXGeometryShaderDefault, 0, 0);
+	DXDeviceContext->GSSetShader(DXGeometryShaderInert, 0, 0);
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);
@@ -1827,8 +1827,8 @@ void Cleanup()
 	if (DXPixelShaderCubeMap) DXPixelShaderCubeMap->Release();
 	if (DXPixelShaderDefault) DXPixelShaderDefault->Release();
 	if (DXGeometryShaderDistort) DXGeometryShaderDistort->Release();
-	if (DXGeometryShaderDefault) DXGeometryShaderDefault->Release();
-	if (DXVertexShaderDistort) DXVertexShaderDistort->Release();
+	if (DXGeometryShaderInert) DXGeometryShaderInert->Release();
+	if (DXVertexShaderScale) DXVertexShaderScale->Release();
 	if (DXVertexShaderDefault) DXVertexShaderDefault->Release();
 	if (DXLinearSampler) DXLinearSampler->Release();
 	if (RenderToTextureDXShaderResourceView) RenderToTextureDXShaderResourceView->Release();
