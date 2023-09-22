@@ -1,7 +1,7 @@
 #include <Shaders/VertexShaderDefault.csh>
 #include <Shaders/VertexShaderDistort.csh>
-#include <Shaders/GeometryShaderDefault.csh>
 #include <Shaders/GeometryShaderDistort.csh>
+#include <Shaders/GeometryShaderInert.csh>
 #include <Shaders/PixelShaderDefault.csh>
 #include <Shaders/PixelShaderCubeMap.csh>
 #include <Shaders/PixelShaderDistort.csh>

@@ -425,8 +425,8 @@ bool InitializeInstance(HINSTANCE hInstance, int nCmdShow)
 	// ---------- VIEWPORTS ----------
 
 	// ---------- SHADERS ----------
-	hresult = DXDevice->CreateGeometryShader(GeometryShaderDefault, sizeof(GeometryShaderDefault), nullptr, &DXGeometryShaderDefault);
 	hresult = DXDevice->CreateGeometryShader(GeometryShaderDistort, sizeof(GeometryShaderDistort), nullptr, &DXGeometryShaderDistort);
+	hresult = DXDevice->CreateGeometryShader(GeometryShaderInert, sizeof(GeometryShaderInert), nullptr, &DXGeometryShaderDefault);
 
 	hresult = DXDevice->CreatePixelShader(PixelShaderDefault, sizeof(PixelShaderDefault), nullptr, &DXPixelShaderDefault);
 	hresult = DXDevice->CreatePixelShader(PixelShaderCubeMap, sizeof(PixelShaderCubeMap), nullptr, &DXPixelShaderCubeMap);
