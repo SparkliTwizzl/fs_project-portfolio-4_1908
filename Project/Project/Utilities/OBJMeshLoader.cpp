@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "StringHash.hpp"
+#include <Utilities/StringHash.hpp>
 
 using std::string;
 using std::vector;

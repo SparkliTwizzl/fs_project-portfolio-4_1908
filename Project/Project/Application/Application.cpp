@@ -6,21 +6,20 @@
 #include <iostream>
 #include <string>
 
-#include "../Definitions/ControlMapping.h"
-#include "../Utilities/DDSTextureLoader.h"
-#include "../Utilities/OBJMeshLoader.h"
-
-#include "../Shaders/VertexShaderDefault.csh"
-#include "../Shaders/VertexShaderDistort.csh"
-#include "../Shaders/GeometryShaderDefault.csh"
-#include "../Shaders/GeometryShaderDistort.csh"
-#include "../Shaders/PixelShaderDefault.csh"
-#include "../Shaders/PixelShaderCubeMap.csh"
-#include "../Shaders/PixelShaderDistort.csh"
-#include "../Shaders/PixelShaderInputColor.csh"
-#include "../Shaders/PixelShaderInputColorLights.csh"
-#include "../Shaders/PixelShaderSolidColor.csh"
-#include "../Shaders/PixelShaderSolidColorLights.csh"
+#include <Definitions/ControlMapping.h>
+#include <Shaders/VertexShaderDefault.csh>
+#include <Shaders/VertexShaderDistort.csh>
+#include <Shaders/GeometryShaderDefault.csh>
+#include <Shaders/GeometryShaderDistort.csh>
+#include <Shaders/PixelShaderDefault.csh>
+#include <Shaders/PixelShaderCubeMap.csh>
+#include <Shaders/PixelShaderDistort.csh>
+#include <Shaders/PixelShaderInputColor.csh>
+#include <Shaders/PixelShaderInputColorLights.csh>
+#include <Shaders/PixelShaderSolidColor.csh>
+#include <Shaders/PixelShaderSolidColorLights.csh>
+#include <Utilities/DDSTextureLoader.h>
+#include <Utilities/OBJMeshLoader.h>
 
 using namespace DirectX;
 using std::string;
