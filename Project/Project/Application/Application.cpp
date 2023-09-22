@@ -64,7 +64,6 @@ struct VertexShaderConstantBuffer
 	XMMATRIX ProjectionMatrix;
 	XMMATRIX InstanceOffsets[MAX_INSTANCES];
 	float Time;
-	XMFLOAT3 Padding;
 };
 
 struct PixelShaderConstantBuffer
@@ -899,7 +898,7 @@ void Render()
 		{},
 	};
 	// spot
-	SpotLight SpotLights[MAX_SPOT_LIGHTS] = {};
+	SpotLight spotLights[MAX_SPOT_LIGHTS] = {};
 	// ----- LIGHTS -----
 
 	// ----- UPDATE WORLD POSITIONS -----
