@@ -10,3 +10,12 @@ cbuffer VertexConstantBuffer : register(b0)
 	float Time;
 	float3 Padding;
 }
+
+
+float4 ApplyCameraMatricesToPosition(float4 position, matrix world, matrix view, matrix projection)
+{
+	position = mul(position, world);
+	position = mul(position, view);
+	position = mul(position, projection);
+	return position;
+}
