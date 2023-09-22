@@ -1,0 +1,11 @@
+#include <Shaders/VertexShaderDefault.csh>
+#include <Shaders/VertexShaderDistort.csh>
+#include <Shaders/GeometryShaderDefault.csh>
+#include <Shaders/GeometryShaderDistort.csh>
+#include <Shaders/PixelShaderDefault.csh>
+#include <Shaders/PixelShaderCubeMap.csh>
+#include <Shaders/PixelShaderDistort.csh>
+#include <Shaders/PixelShaderInputColor.csh>
+#include <Shaders/PixelShaderInputColorLights.csh>
+#include <Shaders/PixelShaderSolidColor.csh>
+#include <Shaders/PixelShaderSolidColorLights.csh>

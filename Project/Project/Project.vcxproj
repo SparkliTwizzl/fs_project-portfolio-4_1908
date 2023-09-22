@@ -155,6 +155,7 @@
     <ClInclude Include="Project Items/Resource.h" />
     <ClInclude Include="Project Items/stdafx.h" />
     <ClInclude Include="Project Items/targetver.h" />
+    <ClInclude Include="Shaders\ShaderLibrary.h" />
     <ClInclude Include="Utilities/DDSTextureLoader.h" />
     <ClInclude Include="Utilities/OBJMeshLoader.h" />
     <ClInclude Include="Utilities/StringHash.hpp" />
