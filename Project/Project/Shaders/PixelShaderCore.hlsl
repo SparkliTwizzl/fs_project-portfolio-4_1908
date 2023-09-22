@@ -40,7 +40,6 @@ cbuffer PixelConstantBuffer : register(b1)
 	PointLight PointLights[MAX_POINT_LIGHTS];
 	SpotLight SpotLights[MAX_SPOT_LIGHTS];
 	float Time;
-	float3 Padding;
 }
 
 

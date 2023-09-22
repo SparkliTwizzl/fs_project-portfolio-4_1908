@@ -72,9 +72,8 @@ struct PixelShaderConstantBuffer
 	XMFLOAT4 InstanceColors[MAX_INSTANCES];
 	DirectionalLight DirectionalLights[MAX_DIRECTIONAL_LIGHTS];
 	PointLight PointLights[MAX_POINT_LIGHTS];
-	//SpotLight SpotLights[MAX_SPOT_LIGHTS];
+	SpotLight SpotLights[MAX_SPOT_LIGHTS];
 	float Time;
-	XMFLOAT3 Padding;
 };
 
 
@@ -156,11 +155,11 @@ ID3D11GeometryShader* DXGeometryShaderInert = nullptr;
 ID3D11GeometryShader* DXGeometryShaderDistort = nullptr;
 ID3D11PixelShader* DXPixelShaderDefault = nullptr;
 ID3D11PixelShader* DXPixelShaderCubeMap = nullptr;
-ID3D11PixelShader* DXPixelShaderDistort = nullptr;
 ID3D11PixelShader* DXPixelShaderInputColor = nullptr;
 ID3D11PixelShader* DXPixelShaderInputColorLights = nullptr;
 ID3D11PixelShader* DXPixelShaderSolidColor = nullptr;
 ID3D11PixelShader* DXPixelShaderSolidColorLights = nullptr;
+ID3D11PixelShader* DXPixelShaderVisualizeNormal = nullptr;
 ID3D11VertexShader* DXVertexShaderDefault = nullptr;
 ID3D11VertexShader* DXVertexShaderScale = nullptr;
 
@@ -429,11 +428,11 @@ bool InitializeInstance(HINSTANCE hInstance, int nCmdShow)
 
 	hresult = DXDevice->CreatePixelShader(PixelShaderDefault, sizeof(PixelShaderDefault), nullptr, &DXPixelShaderDefault);
 	hresult = DXDevice->CreatePixelShader(PixelShaderCubeMap, sizeof(PixelShaderCubeMap), nullptr, &DXPixelShaderCubeMap);
-	hresult = DXDevice->CreatePixelShader(PixelShaderDistort, sizeof(PixelShaderDistort), nullptr, &DXPixelShaderDistort);
 	hresult = DXDevice->CreatePixelShader(PixelShaderInputColor, sizeof(PixelShaderInputColor), nullptr, &DXPixelShaderInputColor);
 	hresult = DXDevice->CreatePixelShader(PixelShaderInputColorLights, sizeof(PixelShaderInputColorLights), nullptr, &DXPixelShaderInputColorLights);
 	hresult = DXDevice->CreatePixelShader(PixelShaderSolidColor, sizeof(PixelShaderSolidColor), nullptr, &DXPixelShaderSolidColor);
 	hresult = DXDevice->CreatePixelShader(PixelShaderSolidColorLights, sizeof(PixelShaderSolidColorLights), nullptr, &DXPixelShaderSolidColorLights);
+	hresult = DXDevice->CreatePixelShader(PixelShaderVisualizeNormal, sizeof(PixelShaderVisualizeNormal), nullptr, &DXPixelShaderVisualizeNormal);
 
 	hresult = DXDevice->CreateVertexShader(VertexShaderDefault, sizeof(VertexShaderDefault), nullptr, &DXVertexShaderDefault);
 	hresult = DXDevice->CreateVertexShader(VertexShaderScale, sizeof(VertexShaderScale), nullptr, &DXVertexShaderScale);
@@ -1425,7 +1424,7 @@ void Render()
 	cBufferPS.InstanceColors[0] = { 0.1f, 0.1f, 0.1f, 1 };
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	if (ShouldUseDefaultPixelShader) DXDeviceContext->PSSetShader(DXPixelShaderDefault, 0, 0);	// default shader
-	else DXDeviceContext->PSSetShader(DXPixelShaderDistort, 0, 0);		// fancy shader
+	else DXDeviceContext->PSSetShader(DXPixelShaderVisualizeNormal, 0, 0);		// fancy shader
 	DXDeviceContext->PSSetShaderResources(0, 1, &Brazier01DXShaderResourceView);
 	DXDeviceContext->DrawIndexed(Brazier01IndexCount, 0, 0);
 	// ----- BRAZIER01 -----
@@ -1823,7 +1822,7 @@ void Cleanup()
 	if (DXPixelShaderSolidColor) DXPixelShaderSolidColor->Release();
 	if (DXPixelShaderInputColorLights) DXPixelShaderInputColorLights->Release();
 	if (DXPixelShaderInputColor) DXPixelShaderInputColor->Release();
-	if (DXPixelShaderDistort) DXPixelShaderDistort->Release();
+	if (DXPixelShaderVisualizeNormal) DXPixelShaderVisualizeNormal->Release();
 	if (DXPixelShaderCubeMap) DXPixelShaderCubeMap->Release();
 	if (DXPixelShaderDefault) DXPixelShaderDefault->Release();
 	if (DXGeometryShaderDistort) DXGeometryShaderDistort->Release();
