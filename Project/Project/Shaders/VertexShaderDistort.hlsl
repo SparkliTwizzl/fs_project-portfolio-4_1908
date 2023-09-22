@@ -4,7 +4,9 @@
 ShaderVertex main(RawVertex input)
 {
 	ShaderVertex output = (ShaderVertex) 0;
-	float4 distortedPosition = float4(sin(input.Position.x * Time), sin(input.Position.y * Time), sin(input.Position.z * Time), input.Position.w);
+	float modifier = abs(sin(Time)) + 0.5f;
+	float4 distortedPosition = input.Position * modifier;
+	distortedPosition.w = input.Position.w;
 	distortedPosition = mul(distortedPosition, InstanceOffsets[input.InstanceId]);
 
 	output.Color = input.Color;
