@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <Definitions/DataTypes.h>
+#include <Definitions/MathDataTypes.h>
 
 
 struct OBJVertex

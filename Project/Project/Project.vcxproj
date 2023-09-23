@@ -151,7 +151,7 @@
   <ItemGroup>
     <ClInclude Include="Application/Application.h" />
     <ClInclude Include="Definitions/ControlMapping.h" />
-    <ClInclude Include="Definitions/DataTypes.h" />
+    <ClInclude Include="Definitions/MathDataTypes.h" />
     <ClInclude Include="Project Items/Resource.h" />
     <ClInclude Include="Project Items/stdafx.h" />
     <ClInclude Include="Project Items/targetver.h" />

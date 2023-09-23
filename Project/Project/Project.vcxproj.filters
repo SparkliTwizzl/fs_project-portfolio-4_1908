@@ -24,7 +24,7 @@
     <ClInclude Include="Definitions/ControlMapping.h">
       <Filter>Definitions</Filter>
     </ClInclude>
-    <ClInclude Include="Definitions/DataTypes.h">
+    <ClInclude Include="Definitions/MathDataTypes.h">
       <Filter>Definitions</Filter>
     </ClInclude>
     <ClInclude Include="Project Items/Resource.h">
