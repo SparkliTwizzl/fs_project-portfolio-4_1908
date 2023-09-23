@@ -199,7 +199,7 @@ bool ShouldUseDefaultGeometryShader = true;
 bool ShouldUseDefaultPixelShader = true;
 
 // function forward definitions, aka Pain™
-ATOM MyRegisterClass(HINSTANCE hInstance);
+ATOM MyRegisterClass(HINSTANCE);
 bool InitializeInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, unsigned int, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, unsigned int, WPARAM, LPARAM);
@@ -595,7 +595,7 @@ bool InitializeInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - post a quit message and return
 //
 //
-LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWindow, unsigned int message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
@@ -606,13 +606,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM 
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			DialogBox(CurrentHInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			DialogBox(CurrentHInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWindow, About);
 			break;
 		case IDM_EXIT:
-			DestroyWindow(hWnd);
+			DestroyWindow(hWindow);
 			break;
 		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			return DefWindowProc(hWindow, message, wParam, lParam);
 		}
 	}
 	break;
@@ -628,13 +628,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM 
 		PostQuitMessage(0);
 		break;
 	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
+		return DefWindowProc(hWindow, message, wParam, lParam);
 	}
 	return 0;
 }
 
 // Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, unsigned int message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK About(HWND hDialog, unsigned int message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
 	switch (message)
@@ -645,7 +645,7 @@ INT_PTR CALLBACK About(HWND hDlg, unsigned int message, WPARAM wParam, LPARAM lP
 	case WM_COMMAND:
 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
 		{
-			EndDialog(hDlg, LOWORD(wParam));
+			EndDialog(hDialog, LOWORD(wParam));
 			return (INT_PTR)TRUE;
 		}
 		break;
@@ -653,30 +653,30 @@ INT_PTR CALLBACK About(HWND hDlg, unsigned int message, WPARAM wParam, LPARAM lP
 	return (INT_PTR)FALSE;
 }
 
-void CreateProceduralGrid(Vertex _origin, unsigned int _numDivisions, float _scale,
-	Vertex** _pp_verts, unsigned int& _numVerts, unsigned int** _pp_inds, unsigned int& _numInds)
+void CreateProceduralGrid(Vertex origin, unsigned int divisionCount, float scale,
+	Vertex** vertices, unsigned int& vertexCount, unsigned int** indices, unsigned int& indexCount)
 {
 	// calculate number of vertices / indices
-	_numVerts = _numDivisions * _numDivisions;
-	_numInds = 6 * (_numDivisions - 1) * (_numDivisions - 1);
+	vertexCount = divisionCount * divisionCount;
+	indexCount = 6 * (divisionCount - 1) * (divisionCount - 1);
 	// set vertex data
-	Vertex* p_verts = new Vertex[_numVerts];
-	for (unsigned int z = 0; z < _numDivisions; z++)
-		for (unsigned int x = 0; x < _numDivisions; x++)
+	Vertex* p_verts = new Vertex[vertexCount];
+	for (unsigned int z = 0; z < divisionCount; z++)
+		for (unsigned int x = 0; x < divisionCount; x++)
 		{
-			unsigned int index = x + (z * _numDivisions);
-			assert(index < _numVerts);
+			unsigned int index = x + (z * divisionCount);
+			assert(index < vertexCount);
 			// calculate offset amount
-			float offsetX = (_scale * -0.5f) + (_scale / (_numDivisions - 1)) * x;
-			float offsetZ = (_scale * -0.5f) + (_scale / (_numDivisions - 1)) * z;
+			float offsetX = (scale * -0.5f) + (scale / (divisionCount - 1)) * x;
+			float offsetZ = (scale * -0.5f) + (scale / (divisionCount - 1)) * z;
 			// offset position
-			p_verts[index].Position = _origin.Position;
+			p_verts[index].Position = origin.Position;
 			p_verts[index].Position.x += offsetX;
 			p_verts[index].Position.z += offsetZ;
 			// copy normal
 			p_verts[index].Normal = { 0, 1, 0 };
 			// offset Texel coord
-			p_verts[index].Texel = _origin.Texel;
+			p_verts[index].Texel = origin.Texel;
 			p_verts[index].Texel.x += offsetX;
 			p_verts[index].Texel.y += offsetZ;
 			// randomize Color
@@ -686,26 +686,26 @@ void CreateProceduralGrid(Vertex _origin, unsigned int _numDivisions, float _sca
 			p_verts[index].Color.z = (rand() % 1000) / 1000.0f;
 			p_verts[index].Color.w = 1;
 		}
-	*_pp_verts = p_verts;
+	*vertices = p_verts;
 	// set indices
-	unsigned int* p_inds = new unsigned int[_numInds];
-	for (unsigned int z = 0; z < _numDivisions - 1; z++)
-		for (unsigned int x = 0; x < _numDivisions - 1; x++)
+	unsigned int* p_inds = new unsigned int[indexCount];
+	for (unsigned int z = 0; z < divisionCount - 1; z++)
+		for (unsigned int x = 0; x < divisionCount - 1; x++)
 		{
-			unsigned int vertIndex = x + (z * _numDivisions);
-			assert(vertIndex < _numVerts);
-			unsigned int index = 6 * (x + (z * (_numDivisions - 1)));
-			assert(index < _numInds);
+			unsigned int vertIndex = x + (z * divisionCount);
+			assert(vertIndex < vertexCount);
+			unsigned int index = 6 * (x + (z * (divisionCount - 1)));
+			assert(index < indexCount);
 			p_inds[index + 0] = vertIndex;
-			p_inds[index + 1] = vertIndex + _numDivisions + 1;
+			p_inds[index + 1] = vertIndex + divisionCount + 1;
 			p_inds[index + 2] = vertIndex + 1;
 			p_inds[index + 3] = vertIndex;
-			p_inds[index + 4] = vertIndex + _numDivisions;
-			p_inds[index + 5] = vertIndex + _numDivisions + 1;
+			p_inds[index + 4] = vertIndex + divisionCount;
+			p_inds[index + 5] = vertIndex + divisionCount + 1;
 
 			//_RPTN(0, "%distance, %distance, %distance,\n%distance, %distance, %distance\n\n", p_inds[index + 0], p_inds[index + 1], p_inds[index + 2], p_inds[index + 3], p_inds[index + 4], p_inds[index + 5]);
 		}
-	*_pp_inds = p_inds;
+	*indices = p_inds;
 }
 
 void ProcessOBJMesh(string filePath, Vertex** vertices, unsigned int& vertexCount, unsigned int** indices, unsigned int& indexCount)
@@ -742,14 +742,14 @@ void ProcessOBJMesh(string filePath, Vertex** vertices, unsigned int& vertexCoun
 	*indices = indexList;
 }
 
-HRESULT InitializeDepthStencilView(unsigned int _width, unsigned int _height, ID3D11Texture2D** _pp_depthStencil,
-	ID3D11DepthStencilView** _pp_depthStencilView)
+HRESULT InitializeDepthStencilView(unsigned int width, unsigned int height, ID3D11Texture2D** depthStencil,
+	ID3D11DepthStencilView** depthStencilView)
 {
 	HRESULT hr;
 	// create depth stencil texture
 	D3D11_TEXTURE2D_DESC depthStencilDesc = {};
-	depthStencilDesc.Width = _width;
-	depthStencilDesc.Height = _height;
+	depthStencilDesc.Width = width;
+	depthStencilDesc.Height = height;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -759,7 +759,7 @@ HRESULT InitializeDepthStencilView(unsigned int _width, unsigned int _height, ID
 	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	depthStencilDesc.CPUAccessFlags = 0;
 	depthStencilDesc.MiscFlags = 0;
-	hr = DXDevice->CreateTexture2D(&depthStencilDesc, nullptr, _pp_depthStencil);
+	hr = DXDevice->CreateTexture2D(&depthStencilDesc, nullptr, depthStencil);
 	if (FAILED(hr))
 		return hr;
 
@@ -768,44 +768,44 @@ HRESULT InitializeDepthStencilView(unsigned int _width, unsigned int _height, ID
 	depthStencilViewDesc.Format = depthStencilDesc.Format;
 	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
-	return DXDevice->CreateDepthStencilView(*_pp_depthStencil, &depthStencilViewDesc, _pp_depthStencilView);
+	return DXDevice->CreateDepthStencilView(*depthStencil, &depthStencilViewDesc, depthStencilView);
 }
 
-HRESULT InitializeVertexBuffer(unsigned int _numVerts, Vertex** _pp_verts, ID3D11Buffer** _pp_vBuffer)
+HRESULT InitializeVertexBuffer(unsigned int vertexCount, Vertex** vertices, ID3D11Buffer** vertexBuffer)
 {
 	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.ByteWidth = sizeof(Vertex) * _numVerts;
+	bufferDesc.ByteWidth = sizeof(Vertex) * vertexCount;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
 	D3D11_SUBRESOURCE_DATA subData = {};
-	subData.pSysMem = *_pp_verts;
-	return DXDevice->CreateBuffer(&bufferDesc, &subData, _pp_vBuffer);
+	subData.pSysMem = *vertices;
+	return DXDevice->CreateBuffer(&bufferDesc, &subData, vertexBuffer);
 }
 
-HRESULT InitializeIndexBuffer(unsigned int _numInds, unsigned int** _pp_inds, ID3D11Buffer** _pp_iBuffer)
+HRESULT InitializeIndexBuffer(unsigned int indexCount, unsigned int** indices, ID3D11Buffer** indexBuffer)
 {
 	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.ByteWidth = sizeof(unsigned int) * _numInds;
+	bufferDesc.ByteWidth = sizeof(unsigned int) * indexCount;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
 	D3D11_SUBRESOURCE_DATA subData = {};
-	subData.pSysMem = *_pp_inds;
-	return DXDevice->CreateBuffer(&bufferDesc, &subData, _pp_iBuffer);
+	subData.pSysMem = *indices;
+	return DXDevice->CreateBuffer(&bufferDesc, &subData, indexBuffer);
 }
 
-HRESULT InitializeConstantBuffer(unsigned int _bufferSize, ID3D11Buffer** _pp_cBuffer)
+HRESULT InitializeConstantBuffer(unsigned int bufferSize, ID3D11Buffer** constantBuffer)
 {
 	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.ByteWidth = _bufferSize;
+	bufferDesc.ByteWidth = bufferSize;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDesc.CPUAccessFlags = 0;
-	return DXDevice->CreateBuffer(&bufferDesc, nullptr, _pp_cBuffer);
+	return DXDevice->CreateBuffer(&bufferDesc, nullptr, constantBuffer);
 }
 
-HRESULT InitializeSamplerState(ID3D11SamplerState** _pp_samplerState)
+HRESULT InitializeSamplerState(ID3D11SamplerState** samplerState)
 {
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -815,7 +815,7 @@ HRESULT InitializeSamplerState(ID3D11SamplerState** _pp_samplerState)
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	return DXDevice->CreateSamplerState(&samplerDesc, _pp_samplerState);
+	return DXDevice->CreateSamplerState(&samplerDesc, samplerState);
 }
 
 void Render()
