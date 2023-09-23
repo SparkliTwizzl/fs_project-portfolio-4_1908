@@ -36,6 +36,9 @@
     <ClInclude Include="Project Items/targetver.h">
       <Filter>Project Items</Filter>
     </ClInclude>
+    <ClInclude Include="Shaders/ShaderLibrary.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
     <ClInclude Include="Utilities/DDSTextureLoader.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -71,19 +74,19 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders/GeometryShaderDefault.hlsl">
+    <FxCompile Include="Shaders/GeometryShaderInert.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders/GeometryShaderDistort.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders/GeometryShaderInert.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders/PixelShaderCubeMap.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders/PixelShaderDefault.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders/PixelShaderDistort.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders/PixelShaderInputColor.hlsl">
@@ -98,10 +101,13 @@
     <FxCompile Include="Shaders/PixelShaderSolidColorLights.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders/PixelShaderVisualizeNormal.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Shaders/VertexShaderDefault.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders/VertexShaderDistort.hlsl">
+    <FxCompile Include="Shaders/VertexShaderScale.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
