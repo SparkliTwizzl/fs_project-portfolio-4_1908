@@ -8,5 +8,4 @@ void main(triangle ShaderVertex input[3], inout TriangleStream<ShaderVertex> out
 	{
 		outputStream.Append(input[i]);
 	}
-	outputStream.RestartStrip();
 }

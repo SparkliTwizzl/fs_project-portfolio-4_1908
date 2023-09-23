@@ -879,21 +879,24 @@ void Render()
 
 	// ----- LIGHTS -----
 	// directional
-#define DIRECTIONAL_LIGHT_COUNT 1
+#define DIRECTIONAL_LIGHT_COUNT 3
 	DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS] =
 	{
 		{
-			.Color = { 0.3f, 0.6f, 0.3f, 1 },
+			.Color = { 0, 0.5f, 0, 1 },
 			.Direction = { 0, 1, 0, 0 },
 		},
 		{
 			.Color = { 0.5f, 0, 0, 1 },
-			.Direction = { 1, 0, 0, 0 },
+			.Direction = { 1, -1, 0, 0 },
 		},
-		{},
+		{
+			.Color = { 0, 0, 0.5f, 1 },
+			.Direction = { 0, 1, 0, 0 },
+		},
 	};
 	// point
-#define POINT_LIGHT_COUNT 1
+#define POINT_LIGHT_COUNT 2
 	PointLight pointLights[MAX_POINT_LIGHTS] =
 	{
 		{
