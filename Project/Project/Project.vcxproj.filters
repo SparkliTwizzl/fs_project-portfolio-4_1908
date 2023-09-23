@@ -37,7 +37,7 @@
       <Filter>Project Items</Filter>
     </ClInclude>
     <ClInclude Include="Shaders/ShaderLibrary.h">
-      <Filter>Utilities</Filter>
+      <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Utilities/DDSTextureLoader.h">
       <Filter>Utilities</Filter>
