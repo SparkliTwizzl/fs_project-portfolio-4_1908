@@ -882,18 +882,32 @@ void Render()
 #define DIRECTIONAL_LIGHT_COUNT 1
 	DirectionalLight directionalLights[MAX_DIRECTIONAL_LIGHTS] =
 	{
-		// Color, Direction
-		{ { 0, 0, 1, 1 }, { 0, 1, 0, 0 } },
-		{},
+		{
+			.Color = { 0.3f, 0.6f, 0.3f, 1 },
+			.Direction = { 0, 1, 0, 0 },
+		},
+		{
+			.Color = { 0.5f, 0, 0, 1 },
+			.Direction = { 1, 0, 0, 0 },
+		},
 		{},
 	};
 	// point
 #define POINT_LIGHT_COUNT 1
 	PointLight pointLights[MAX_POINT_LIGHTS] =
 	{
-		// Color, Position, Range, Attenuation
-		{ { 0, 1, 0, 1 }, { 1.5f, 0.5, 0, 1 }, 10, { 0, 0, 0.5f} },
-		{},
+		{
+			.Color = { 0.6f, 0.6f, 0.6f, 1 },
+			.Position = { 1.5f, 0.5f, 0, 1 },
+			.Range = 10,
+			.Attenuation = { 0, 0, 0.5f},
+		},
+		{
+			.Color = { 0.6f, 0.3f, 0, 1 },
+			.Position = { 0, 1, 0, 1 },
+			.Range = 20,
+			.Attenuation = { 0, 0, 0.5f},
+		},
 		{},
 	};
 	// spot
@@ -1113,8 +1127,18 @@ void Render()
 
 	// pixel
 	cBufferPS.AmbientColor = { 1, 1, 1, 1 };
-	cBufferPS.DirectionalLights[0] = directionalLights[0];
-	cBufferPS.PointLights[0] = pointLights[0];
+	for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; ++i)
+	{
+		cBufferPS.DirectionalLights[i] = directionalLights[i];
+	}
+	for (int i = 0; i < MAX_POINT_LIGHTS; ++i)
+	{
+		cBufferPS.PointLights[i] = pointLights[i];
+	}
+	for (int i = 0; i < MAX_SPOT_LIGHTS; ++i)
+	{
+		cBufferPS.SpotLights[i] = spotLights[i];
+	}
 	cBufferPS.Time = time;
 	DXDeviceContext->UpdateSubresource(DXPixelShaderConstantBuffer, 0, nullptr, &cBufferPS, 0, 0);
 	// ----- SET SHARED CONSTANT BUFFER VALUES -----
