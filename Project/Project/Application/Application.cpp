@@ -15,14 +15,11 @@ using namespace DirectX;
 using std::string;
 
 
-#define MAX_LOADSTRING 100
-
-#define MAX_INSTANCES 5
-#define MAX_DIRECTIONAL_LIGHTS 3
-#define MAX_POINT_LIGHTS 3
-#define MAX_SPOT_LIGHTS 3
-
-#define DEGREES_TO_RADIANS(degrees) (degrees * (XM_PI / 180.0f))
+const int MAX_LOADSTRING = 100;
+const int MAX_INSTANCES = 5;
+const int MAX_DIRECTIONAL_LIGHTS = 3;
+const int MAX_POINT_LIGHTS = 3;
+const int MAX_SPOT_LIGHTS = 3;
 
 
 struct Vertex
@@ -198,12 +195,14 @@ bool ShouldUsedDefaultVertexShader = true;
 bool ShouldUseDefaultGeometryShader = true;
 bool ShouldUseDefaultPixelShader = true;
 
+
 // function forward definitions, aka Pain™
 ATOM MyRegisterClass(HINSTANCE);
 bool InitializeInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, unsigned int, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, unsigned int, WPARAM, LPARAM);
 void CreateProceduralGrid(Vertex, unsigned int, float, Vertex**, unsigned int&, unsigned int**, unsigned int&);
+float DegreesToRadians(float degrees);
 void ProcessOBJMesh(string, Vertex**, unsigned int&, unsigned int**, unsigned int&);
 HRESULT InitializeDepthStencilView(unsigned int, unsigned int, ID3D11Texture2D**, ID3D11DepthStencilView**);
 HRESULT InitializeVertexBuffer(unsigned int, Vertex**, ID3D11Buffer**);
@@ -708,6 +707,11 @@ void CreateProceduralGrid(Vertex origin, unsigned int divisionCount, float scale
 	*indices = p_inds;
 }
 
+float DegreesToRadians(float degrees)
+{
+	return degrees * (XM_PI / 180.0f);
+}
+
 void ProcessOBJMesh(string filePath, Vertex** vertices, unsigned int& vertexCount, unsigned int** indices, unsigned int& indexCount)
 {
 	OBJMeshLoader objMeshLoader = OBJMeshLoader();
@@ -1048,7 +1052,7 @@ void Render()
 
 	float cameraRotationX = 0.0f;
 	float cameraRotationY = 0.0f;
-	float cameraRotationAngle = DEGREES_TO_RADIANS(CameraRotationSpeed) * deltaTime;
+	float cameraRotationAngle = DegreesToRadians(CameraRotationSpeed) * deltaTime;
 	if (GetAsyncKeyState(KeyLookUp)) cameraRotationX -= cameraRotationAngle;
 	if (GetAsyncKeyState(KeyLookDown)) cameraRotationX += cameraRotationAngle;
 	if (GetAsyncKeyState(KeyLookLeft)) cameraRotationY -= cameraRotationAngle;
